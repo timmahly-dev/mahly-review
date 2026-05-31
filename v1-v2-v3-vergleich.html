@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FF6B35">
+<title>Mahly · V1 / V2 / V3</title>
+<style>
+:root { --o:#FF6B35; --o-soft:#FFE9DD; --bg:#FFF8F0; --ink:#1A1A1A;
+        --mute:#7a6f5c; --line:#EFE6D6; --card:#fff;
+        --green:#2D6A4F; --green-soft:#dff7e6; --red:#a82828; --red-soft:#fde0e0;
+        --orange:#9a6a1a; --orange-soft:#fbe6c9; --blue:#3a5a85; --blue-soft:#eef4ff; }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:15px}
+.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:12px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;box-shadow:0 1px 6px rgba(80,60,30,.06)}
+.brand{font-weight:800;font-size:18px}
+.brand small{color:var(--mute);font-weight:500;margin-left:6px;font-size:13px}
+.stat{font-size:13px;color:#555;padding:5px 11px;background:var(--bg);border-radius:8px}
+.stat strong{color:var(--o)}
+.list{padding:18px 14px 80px;display:flex;flex-direction:column;gap:18px;max-width:1300px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(80,60,30,.06)}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--line);background:var(--bg)}
+.card-title{font-weight:800;font-size:17px;line-height:1.25}
+.card-sub{font-size:12px;color:var(--mute);margin-top:3px}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line)}
+.side{background:#fff;display:flex;flex-direction:column}
+.side h3{margin:0;padding:9px 12px;font-size:12px;font-weight:700;background:#f6efe1;color:var(--mute);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--line);text-align:center}
+.side.v3 h3{background:var(--green-soft);color:var(--green)}
+.side img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;cursor:zoom-in}
+.score-row{display:flex;gap:5px;padding:8px 12px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);font-size:11px}
+.badge{padding:3px 9px;border-radius:7px;font-weight:700;font-size:11px}
+.b-good{background:var(--green-soft);color:var(--green)}
+.b-mid{background:var(--orange-soft);color:var(--orange)}
+.b-low{background:var(--red-soft);color:var(--red)}
+.b-none{background:#eee;color:#777}
+.label{font-size:10px;color:var(--mute);font-weight:600}
+.komm-pro-bild{padding:8px 12px;border-top:1px solid var(--line);background:#fafafa}
+.komm-pro-bild textarea{width:100%;font-family:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;resize:vertical;min-height:48px;background:#fff}
+.komm-pro-bild textarea.has{border-color:var(--o);background:#fffaf6}
+.komm-pro-bild .lab{font-size:10px;color:var(--mute);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.comment-block{padding:12px 18px;border-top:1px solid var(--line)}
+.comment-block.orig{background:var(--red-soft)}
+.comment-block.v3ai{background:#f6efe1}
+.comment-block.v2verdict{background:var(--blue-soft)}
+.comment-block h4{margin:0 0 4px;font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.comment-block .text{font-size:13px;line-height:1.45;color:#333}
+.comment-block.orig .text{color:#5a1c1c}
+.v2-tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700;margin-right:6px}
+.v2-besser{background:var(--green-soft);color:var(--green)}
+.v2-gleich{background:#eee;color:#555}
+.v2-schlechter{background:var(--red-soft);color:var(--red)}
+.fixed-btn{display:flex;gap:8px;padding:10px 18px 14px;border-top:1px solid var(--line);background:#fff;flex-wrap:wrap}
+.fixed-btn label{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid var(--line);border-radius:8px;font-size:13px;cursor:pointer;font-weight:600;user-select:none;background:#fff}
+.fixed-btn label:has(input:checked){border-color:var(--o);background:var(--o-soft);color:var(--o)}
+.fixed-btn input{display:none}
+@media(max-width:760px){.trio{grid-template-columns:1fr}.side h3{padding:7px 10px}.komm-pro-bild textarea{font-size:16px;min-height:54px}.fixed-btn label{padding:10px 14px;font-size:14px}#exportBtn{padding:10px 16px;font-size:14px}}
+/* LIGHTBOX mit Navigation */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:1000;padding:12px}
+.lightbox.open{display:flex}
+.lightbox img{max-width:calc(100% - 100px);max-height:calc(100% - 80px);object-fit:contain;border-radius:8px;user-select:none}
+.lb-btn{position:fixed;top:50%;transform:translateY(-50%);width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;border:none;font-size:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;font-weight:300;backdrop-filter:blur(8px);user-select:none;transition:background .15s}
+.lb-btn:hover,.lb-btn:active{background:rgba(255,255,255,.3)}
+.lb-prev{left:14px}.lb-next{right:14px}
+.lb-close{position:fixed;top:14px;right:14px;width:44px;height:44px;font-size:26px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;border:none;cursor:pointer;backdrop-filter:blur(8px);font-weight:300;transform:none}
+.lb-info{position:fixed;bottom:18px;left:0;right:0;text-align:center;color:rgba(255,255,255,.92);font-size:14px;padding:0 24px;text-shadow:0 1px 4px rgba(0,0,0,.5);pointer-events:none}
+.lb-info b{color:#fff;font-weight:700;display:block;font-size:16px;margin-bottom:3px}
+.lb-info .v-tag{display:inline-block;padding:2px 9px;border-radius:5px;background:rgba(255,255,255,.18);font-weight:700;margin-right:6px}
+.lb-counter{position:fixed;top:18px;left:14px;color:rgba(255,255,255,.7);font-size:13px;font-family:ui-monospace,monospace;background:rgba(255,255,255,.1);padding:5px 11px;border-radius:8px;backdrop-filter:blur(8px)}
+@media(max-width:560px){.lb-btn{width:48px;height:48px;font-size:26px;background:rgba(255,255,255,.22)}.lb-prev{left:8px}.lb-next{right:8px}.lightbox img{max-width:calc(100% - 80px)}}
+footer{text-align:center;padding:24px 18px 50px;color:var(--mute);font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">Mahly <small>V1 / V2 / V3 · 12 Re-Render Runde 3</small></div>
+  <span class="stat" id="cnt"></span>
+  <button id="exportBtn" style="margin-left:auto;padding:7px 14px;border:1px solid var(--o);background:var(--o);color:#fff;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">CSV exportieren</button>
+</div>
+
+<div class="list" id="list"></div>
+
+<footer>
+  V1 = Original · V2 = nach 1. Reroll · V3 = nach Code-Fix<br>
+  Pfeile/Swipe blättern innerhalb der drei Bilder eines Rezepts
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <span class="lb-counter" id="lbCounter"></span>
+  <button class="lb-close" id="lbClose">×</button>
+  <button class="lb-btn lb-prev" id="lbPrev" aria-label="Zurück">‹</button>
+  <img id="lbImg" alt="">
+  <button class="lb-btn lb-next" id="lbNext" aria-label="Weiter">›</button>
+  <div class="lb-info" id="lbInfo"></div>
+</div>
+
+<script>
+var DATA = [{"slug": "spaghetti-mit-tomatensauce-und-basilikum", "title": "Spaghetti mit Tomatensauce und Basilikum", "orig_freundin": "8", "orig_komm": "Das Öl auf dem Teller muss weg", "score_v1": "8.8", "score_v2": "8.6", "score_v3": 8.0, "v2_urteil": "gleich", "v3_ai_comment": "Die Basilikum-Garnitur ist etwas üppig und leicht zu symmetrisch platziert — wirkt minimal gestellt; die Tomatensauce hat eine kräftige, aber noch natürliche Farbe, die dem Gericht entspricht.", "v3_failure": "poor_garnish", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/spaghetti-mit-tomatensauce-und-basilikum.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/spaghetti-mit-tomatensauce-und-basilikum.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/spaghetti-mit-tomatensauce-und-basilikum.png"}, {"slug": "flammkuchen-vegetarisch-mit-pilzen", "title": "Flammkuchen vegetarisch mit Pilzen", "orig_freundin": "9", "orig_komm": "Sieht eher nach Pizza wie nach Flammkuchen aus", "score_v1": "9", "score_v2": "8.8", "score_v3": 8.0, "v2_urteil": "besser", "v3_ai_comment": "Die Petersiliengarnitur in der rechten Ecke wirkt aufgesetzt und bricht den rustikal-authentischen Flammkuchen-Charakter; zudem sind die roten Zwiebeln roh statt karamellisiert, was leicht vom klassischen Elsässer Bild abweicht.", "v3_failure": "poor_garnish", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/flammkuchen-vegetarisch-mit-pilzen.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/flammkuchen-vegetarisch-mit-pilzen.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/flammkuchen-vegetarisch-mit-pilzen.png"}, {"slug": "linsen-mit-spaetzle-und-saitenwuerstchen", "title": "Linsen mit Spätzle und Saitenwürstchen", "orig_freundin": "8", "orig_komm": "Saitenwürstchen sind zu klein und die Farbe stimmt nicht", "score_v1": "8.2", "score_v2": "8", "score_v3": 8.2, "v2_urteil": "schlechter", "v3_ai_comment": "Die Saitenwürstchen wirken leicht blass/roh-rosa statt appetitlich gegart, und die Linsen sind sehr dunkel (fast schwarz statt klassisch braun) — beides leicht unter HelloFresh-Ideal.", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/linsen-mit-spaetzle-und-saitenwuerstchen.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/linsen-mit-spaetzle-und-saitenwuerstchen.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/linsen-mit-spaetzle-und-saitenwuerstchen.png"}, {"slug": "su-boeregi-mit-spinat", "title": "Su Böreği mit Spinat", "orig_freundin": "9", "orig_komm": "Die geschnittenen Stücke sehen komisch aus", "score_v1": "8.4", "score_v2": "8.6", "score_v3": 8.6, "v2_urteil": "schlechter", "v3_ai_comment": "", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/su-boeregi-mit-spinat.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/su-boeregi-mit-spinat.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/su-boeregi-mit-spinat.png"}, {"slug": "falafel-mit-tahini-sauce", "title": "Falafel mit Tahini-Sauce", "orig_freundin": "9", "orig_komm": "Die Soße sieht etwas unecht aus", "score_v1": "8.6", "score_v2": "8.6", "score_v3": 8.8, "v2_urteil": "besser", "v3_ai_comment": "", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/falafel-mit-tahini-sauce.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/falafel-mit-tahini-sauce.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/falafel-mit-tahini-sauce.png"}, {"slug": "italienische-gemuese-frittata", "title": "Italienische Gemüse-Frittata", "orig_freundin": "9", "orig_komm": "Die Auflaufform muss ganz sein und nicht an einer Seite offen", "score_v1": "8.8", "score_v2": "8.6", "score_v3": 8.8, "v2_urteil": "besser", "v3_ai_comment": "", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/italienische-gemuese-frittata.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/italienische-gemuese-frittata.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/italienische-gemuese-frittata.png"}, {"slug": "maultaschen-in-der-pfanne-mit-spiegelei", "title": "Maultaschen in der Pfanne mit Spiegelei", "orig_freundin": "9", "orig_komm": "Die Maultaschen sehen nicht echt aus, keine klare 4 eckige Form", "score_v1": "9.2", "score_v2": "8.6", "score_v3": 8.8, "v2_urteil": "besser", "v3_ai_comment": "", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/maultaschen-in-der-pfanne-mit-spiegelei.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/maultaschen-in-der-pfanne-mit-spiegelei.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/maultaschen-in-der-pfanne-mit-spiegelei.png"}, {"slug": "chia-pudding-mit-beeren-und-kokosmilch", "title": "Chia-Pudding mit Beeren und Kokosmilch", "orig_freundin": "7", "orig_komm": "Fehler bei der Anzeige des Gläschens, das vordere Gläschen ist auf dem Bild unten offen, sodass der Chiapudding rausläuft", "score_v1": "9", "score_v2": "8.4", "score_v3": 9.0, "v2_urteil": "besser", "v3_ai_comment": "", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/chia-pudding-mit-beeren-und-kokosmilch.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/chia-pudding-mit-beeren-und-kokosmilch.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/chia-pudding-mit-beeren-und-kokosmilch.png"}, {"slug": "wraps-mit-gegrilltem-haehnchen-und-avocado", "title": "Wraps mit gegrilltem Hähnchen und Avocado", "orig_freundin": "9", "orig_komm": "Wieso sind die Wraps offen?", "score_v1": "8.4", "score_v2": "8.4", "score_v3": 9.0, "v2_urteil": "gleich", "v3_ai_comment": "", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/wraps-mit-gegrilltem-haehnchen-und-avocado.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/wraps-mit-gegrilltem-haehnchen-und-avocado.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/wraps-mit-gegrilltem-haehnchen-und-avocado.png"}, {"slug": "champignoncremesuppe", "title": "Champignoncremesuppe", "orig_freundin": "9", "orig_komm": "Etwas zu dunkel das Braun", "score_v1": "9", "score_v2": "9", "score_v3": 9.0, "v2_urteil": "besser", "v3_ai_comment": "", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/champignoncremesuppe.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/champignoncremesuppe.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/champignoncremesuppe.png"}, {"slug": "tiropita-kaese-filo", "title": "Tiropita (Käse-Filo)", "orig_freundin": "9", "orig_komm": "Die Auflaufform sieht komisch aus", "score_v1": "9", "score_v2": "9.2", "score_v3": 9.0, "v2_urteil": "schlechter", "v3_ai_comment": "", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/tiropita-kaese-filo.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/tiropita-kaese-filo.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/tiropita-kaese-filo.png"}, {"slug": "croissant-mit-schinken-und-kaese-ueberbacken", "title": "Croissant mit Schinken und Käse überbacken", "orig_freundin": "7", "orig_komm": "Sieht nicht aus wie ein Croissant", "score_v1": "9", "score_v2": "8.6", "score_v3": 9.2, "v2_urteil": "gleich", "v3_ai_comment": "", "v3_failure": "none", "v1_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-20260530/croissant-mit-schinken-und-kaese-ueberbacken.png", "v2_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/_archive-v2-20260531/croissant-mit-schinken-und-kaese-ueberbacken.png", "v3_img": "https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/croissant-mit-schinken-und-kaese-ueberbacken.png"}];
+var STORAGE_VERDICTS = 'mahly-v3-verdicts';
+var STORAGE_KOMMS = 'mahly-v3-komms';
+
+// Flat list of all images for lightbox navigation
+var IMAGES = [];
+for (var i=0; i<DATA.length; i++){
+  IMAGES.push({slug:DATA[i].slug,title:DATA[i].title,ver:'V1',url:DATA[i].v1_img});
+  IMAGES.push({slug:DATA[i].slug,title:DATA[i].title,ver:'V2',url:DATA[i].v2_img});
+  IMAGES.push({slug:DATA[i].slug,title:DATA[i].title,ver:'V3',url:DATA[i].v3_img});
+}
+
+var list=document.getElementById('list'), cnt=document.getElementById('cnt');
+var lightbox=document.getElementById('lightbox'), lbImg=document.getElementById('lbImg');
+var lbInfo=document.getElementById('lbInfo'), lbCounter=document.getElementById('lbCounter');
+var lbIdx = -1;
+
+function loadJSON(k){try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){return{}}}
+function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function badgeClass(s){if(s==null||s==='')return 'b-none';var n=Number(s);if(n>=8.5)return 'b-good';if(n>=8.0)return 'b-mid';return 'b-low'}
+function fmt(s){return (s==null||s==='')?'—':Number(s).toFixed(1).replace('.',',')}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+
+function openLightbox(idx){
+  if(idx<0||idx>=IMAGES.length)return;
+  lbIdx = idx;
+  var it = IMAGES[idx];
+  lbImg.src = it.url;
+  var posInGroup = (idx % 3) + 1;
+  lbInfo.innerHTML = '<b>'+esc(it.title)+'</b><span class="v-tag">'+it.ver+'</span> Bild '+posInGroup+' von 3';
+  lbCounter.textContent = (idx+1)+' / '+IMAGES.length;
+  // Pfeil-Buttons sichtbar deaktivieren am Rand
+  document.getElementById('lbPrev').style.opacity = (posInGroup===1) ? '0.25' : '1';
+  document.getElementById('lbNext').style.opacity = (posInGroup===3) ? '0.25' : '1';
+  document.getElementById('lbPrev').style.pointerEvents = (posInGroup===1) ? 'none' : 'auto';
+  document.getElementById('lbNext').style.pointerEvents = (posInGroup===3) ? 'none' : 'auto';
+  lightbox.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){lightbox.classList.remove('open');lbImg.src='';document.body.style.overflow='';lbIdx=-1;}
+function nav(delta){
+  // Nur innerhalb der drei Bilder EINES Rezepts — KEIN Wrap, am Rand stoppen
+  var groupStart = Math.floor(lbIdx / 3) * 3;
+  var groupEnd = groupStart + 2;
+  var n = lbIdx + delta;
+  if(n < groupStart || n > groupEnd) return; // stoppen
+  openLightbox(n);
+}
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbPrev').addEventListener('click', function(e){e.stopPropagation();nav(-1)});
+document.getElementById('lbNext').addEventListener('click', function(e){e.stopPropagation();nav(1)});
+lightbox.addEventListener('click', function(e){
+  if(e.target===lightbox||e.target===lbImg||e.target===lbInfo) closeLightbox();
+});
+document.addEventListener('keydown', function(e){
+  if(!lightbox.classList.contains('open')) return;
+  if(e.key==='Escape') closeLightbox();
+  if(e.key==='ArrowLeft') nav(-1);
+  if(e.key==='ArrowRight') nav(1);
+});
+// Touch-Swipe
+var touchX0 = 0;
+lightbox.addEventListener('touchstart', function(e){touchX0 = e.changedTouches[0].clientX}, {passive:true});
+lightbox.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - touchX0;
+  if(Math.abs(dx)>40){if(dx>0) nav(-1); else nav(1);}
+}, {passive:true});
+
+function render(){
+  var verdicts = loadJSON(STORAGE_VERDICTS);
+  var komms = loadJSON(STORAGE_KOMMS);
+  list.innerHTML = '';
+  var besser=0, gleich=0, schlechter=0, mitKomm=0;
+  for(var i=0;i<DATA.length;i++){
+    var d = DATA[i];
+    var verdict = verdicts[d.slug] || '';
+    if(verdict==='besser') besser++;
+    if(verdict==='gleich') gleich++;
+    if(verdict==='schlechter') schlechter++;
+    var k1 = (komms[d.slug] && komms[d.slug].v1) || '';
+    var k2 = (komms[d.slug] && komms[d.slug].v2) || '';
+    var k3 = (komms[d.slug] && komms[d.slug].v3) || '';
+    if(k1||k2||k3) mitKomm++;
+    var card = document.createElement('div');
+    card.className='card';
+    var html = '';
+    html += '<div class="card-head">';
+    html += '<div class="card-title">' + esc(d.title) + '</div>';
+    html += '<div class="card-sub">Freundin: <b>'+d.orig_freundin+'/10</b> · AI: V1 '+d.score_v1+' → V2 '+d.score_v2+' → <b>V3 '+fmt(d.score_v3)+'</b></div>';
+    html += '</div>';
+    html += '<div class="trio">';
+    var versions = [['V1','v1','v1_img','score_v1'],['V2','v2','v2_img','score_v2'],['V3','v3','v3_img','score_v3']];
+    for(var j=0;j<3;j++){
+      var v=versions[j], imgIdx=i*3+j;
+      var headerCls = v[1]==='v3' ? ' v3' : '';
+      var headerText = v[1]==='v1' ? 'V1 · Original' : (v[1]==='v2' ? 'V2 · Reroll 1' : 'V3 · Code-Fix');
+      html += '<div class="side'+headerCls+'"><h3>'+headerText+'</h3>';
+      html += '<img loading="lazy" src="'+esc(d[v[2]])+'" alt="" data-imgidx="'+imgIdx+'">';
+      html += '<div class="score-row"><span class="label">AI:</span><span class="badge '+badgeClass(d[v[3]])+'">'+fmt(d[v[3]])+'</span>';
+      if(v[1]==='v3' && d.v3_failure && d.v3_failure!=='none'){
+        html += '<span class="label" style="margin-left:6px;color:var(--red)">⚠ '+esc(d.v3_failure)+'</span>';
+      }
+      html += '</div>';
+      html += '<div class="komm-pro-bild"><span class="lab">📝 dein Kommentar zu '+v[0]+'</span>';
+      var kVal = (komms[d.slug] && komms[d.slug][v[1]]) || '';
+      html += '<textarea data-slug="'+d.slug+'" data-ver="'+v[1]+'" class="'+(kVal?'has':'')+'" placeholder="optional">'+esc(kVal)+'</textarea>';
+      html += '</div></div>';
+    }
+    html += '</div>';
+    html += '<div class="comment-block orig"><h4>💬 Original-Kritik (Freundin zu V1)</h4><div class="text">'+esc(d.orig_komm)+'</div></div>';
+    if(d.v2_urteil){
+      html += '<div class="comment-block v2verdict"><h4>📋 Dein V2-Urteil</h4><div class="text"><span class="v2-tag v2-'+d.v2_urteil+'">'+esc(d.v2_urteil)+'</span></div></div>';
+    }
+    if(d.v3_ai_comment){
+      html += '<div class="comment-block v3ai"><h4>🤖 Vision-Check zum V3</h4><div class="text">'+esc(d.v3_ai_comment)+'</div></div>';
+    }
+    html += '<div class="fixed-btn">';
+    html += '<label><input type="radio" name="v-'+d.slug+'" value="besser" data-slug="'+d.slug+'"'+(verdict==='besser'?' checked':'')+'> ✅ V3 ist gefixt</label>';
+    html += '<label><input type="radio" name="v-'+d.slug+'" value="gleich" data-slug="'+d.slug+'"'+(verdict==='gleich'?' checked':'')+'> 🟰 V3 = V2</label>';
+    html += '<label><input type="radio" name="v-'+d.slug+'" value="schlechter" data-slug="'+d.slug+'"'+(verdict==='schlechter'?' checked':'')+'> ❌ V3 schlechter</label>';
+    html += '</div>';
+    card.innerHTML = html;
+    list.appendChild(card);
+  }
+  cnt.innerHTML = '<strong>'+DATA.length+'</strong> · ✅ <strong>'+besser+'</strong> 🟰 <strong>'+gleich+'</strong> ❌ <strong>'+schlechter+'</strong> · 📝 <strong>'+mitKomm+'</strong>';
+}
+
+list.addEventListener('click', function(e){
+  var img = e.target.closest('img[data-imgidx]');
+  if(img){openLightbox(parseInt(img.dataset.imgidx,10));}
+});
+
+list.addEventListener('change', function(e){
+  if(e.target.type==='radio' && e.target.dataset.slug){
+    var v = loadJSON(STORAGE_VERDICTS);
+    v[e.target.dataset.slug] = e.target.value;
+    saveJSON(STORAGE_VERDICTS, v);
+    render();
+  }
+});
+
+list.addEventListener('input', function(e){
+  if(e.target.tagName==='TEXTAREA' && e.target.dataset.slug){
+    var slug = e.target.dataset.slug, ver = e.target.dataset.ver;
+    var k = loadJSON(STORAGE_KOMMS);
+    k[slug] = k[slug] || {};
+    k[slug][ver] = e.target.value;
+    if(!k[slug][ver]) delete k[slug][ver];
+    if(!k[slug].v1 && !k[slug].v2 && !k[slug].v3) delete k[slug];
+    saveJSON(STORAGE_KOMMS, k);
+    e.target.classList.toggle('has', e.target.value.trim()!=='');
+    // Live-Counter aktualisieren
+    var komms = loadJSON(STORAGE_KOMMS);
+    var mitKomm = Object.keys(komms).length;
+    cnt.innerHTML = cnt.innerHTML.replace(/📝 <strong>\d+<\/strong>/, '📝 <strong>'+mitKomm+'</strong>');
+  }
+});
+
+document.getElementById('exportBtn').addEventListener('click', function(){
+  var verdicts = loadJSON(STORAGE_VERDICTS);
+  var komms = loadJSON(STORAGE_KOMMS);
+  var lines = ['slug;title;orig_freundin;v1_ai;v2_ai;v3_ai;v2_urteil;v3_urteil;orig_kritik;komm_v1;komm_v2;komm_v3'];
+  for(var i=0;i<DATA.length;i++){
+    var d = DATA[i];
+    var verdict = verdicts[d.slug] || '';
+    var k = komms[d.slug] || {};
+    var row = [d.slug, d.title, d.orig_freundin, d.score_v1, d.score_v2, d.score_v3,
+               d.v2_urteil, verdict, (d.orig_komm||'').replace(/[;\n]+/g,' '),
+               (k.v1||'').replace(/[;\n]+/g,' '), (k.v2||'').replace(/[;\n]+/g,' '), (k.v3||'').replace(/[;\n]+/g,' ')];
+    var q = [];
+    for(var j=0;j<row.length;j++){q.push('"'+String(row[j]).replace(/"/g,'""')+'"')}
+    lines.push(q.join(';'));
+  }
+  var blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'mahly-v3-vergleich-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+render();
+</script>
+</body>
+</html>
