@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Mahly · Light-Frühstücks-Review (100 Bilder)</title>
+<style>
+  :root {
+    --orange: #E8763B;
+    --orange-dark: #C45A24;
+    --cream: #FFF8F0;
+    --cream-dark: #F5EDDE;
+    --ink: #2A1F18;
+    --ink-soft: #5C4A3E;
+    --good: #6BAF6B;
+    --warn: #D9A93C;
+    --bad: #C84B2F;
+    --neutral: #8E7F73;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--cream); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--cream); border-bottom: 2px solid var(--orange);
+    padding: 16px 24px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+  .logo { font-size: 28px; font-weight: 700; color: var(--orange); letter-spacing: -1px; }
+  .stats { display: flex; gap: 16px; flex: 1; font-size: 14px; flex-wrap: wrap; }
+  .stat { background: var(--cream-dark); padding: 6px 12px; border-radius: 8px; }
+  .stat b { color: var(--orange); }
+  .controls { display: flex; gap: 8px; }
+  .btn {
+    background: var(--orange); color: white; border: none; padding: 10px 16px;
+    border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: var(--orange-dark); }
+  .btn-secondary { background: white; color: var(--orange); border: 1.5px solid var(--orange); }
+  .btn-secondary:hover { background: var(--cream-dark); }
+
+  .progress-bar {
+    height: 4px; background: var(--cream-dark);
+    position: sticky; top: 76px; z-index: 99;
+  }
+  .progress-fill { height: 100%; background: var(--orange); width: 0%; transition: width 0.3s; }
+
+  .filter-bar {
+    background: var(--cream-dark); padding: 12px 24px;
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    border-bottom: 1px solid #E0D6C5;
+  }
+  .filter-bar label { font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-right: 4px; }
+  .filter-btn {
+    padding: 6px 12px; border-radius: 6px; border: 1px solid #D0C0AD;
+    background: white; cursor: pointer; font-size: 13px;
+  }
+  .filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+  main {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 24px;
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+  .card {
+    background: white; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: flex; flex-direction: column;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+  .card.rated-good { border-top: 4px solid var(--good); }
+  .card.rated-mid { border-top: 4px solid var(--warn); }
+  .card.rated-bad { border-top: 4px solid var(--bad); }
+
+  .card-img-wrap {
+    width: 100%; aspect-ratio: 1/1; background: var(--cream-dark);
+    cursor: zoom-in;
+  }
+  .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .card-meta { padding: 16px; }
+  .card-title { font-size: 15px; font-weight: 600; line-height: 1.3; margin: 0 0 8px; }
+  .card-stats {
+    display: flex; gap: 12px; font-size: 12px; color: var(--ink-soft);
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .card-stat { background: var(--cream-dark); padding: 3px 8px; border-radius: 6px; }
+  .card-stat b { color: var(--orange); }
+  .quality-badge { font-weight: 600; }
+  .quality-badge.q-low { color: var(--bad); }
+  .quality-badge.q-mid { color: var(--warn); }
+  .quality-badge.q-high { color: var(--good); }
+
+  .rating-row {
+    display: flex; gap: 4px; margin: 8px 0;
+    flex-wrap: nowrap; justify-content: space-between;
+  }
+  .rating-btn {
+    flex: 1; min-width: 0;
+    aspect-ratio: 1/1;
+    padding: 0;
+    border-radius: 8px; border: 1.5px solid #D0C0AD;
+    background: white; cursor: pointer; font-weight: 600; font-size: 14px;
+    color: var(--ink-soft);
+    transition: all 0.1s;
+  }
+  .rating-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .rating-btn.selected {
+    background: var(--orange); border-color: var(--orange); color: white;
+    transform: scale(1.05);
+  }
+  .rating-btn.selected.bad { background: var(--bad); border-color: var(--bad); }
+  .rating-btn.selected.mid { background: var(--warn); border-color: var(--warn); }
+  .rating-btn.selected.good { background: var(--good); border-color: var(--good); }
+
+  .comment-area {
+    width: 100%; min-height: 60px; max-height: 200px;
+    border: 1.5px solid #D0C0AD; border-radius: 8px;
+    padding: 8px 10px; font-family: inherit; font-size: 13px;
+    resize: vertical; box-sizing: border-box;
+    background: var(--cream);
+  }
+  .comment-area:focus { outline: none; border-color: var(--orange); }
+
+  .action-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .action-btn {
+    flex: 1; min-width: 100px;
+    padding: 8px; border-radius: 6px; border: 1.5px solid #D0C0AD;
+    background: white; cursor: pointer; font-size: 12px; font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .action-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .action-btn.active.ok { background: var(--good); border-color: var(--good); color: white; }
+  .action-btn.active.rerender { background: var(--warn); border-color: var(--warn); color: white; }
+  .action-btn.active.delete { background: var(--bad); border-color: var(--bad); color: white; }
+
+  /* Lightbox */
+  .lightbox {
+    display: none; position: fixed; inset: 0; background: rgba(42, 31, 24, 0.95);
+    z-index: 1000; cursor: zoom-out; padding: 40px;
+    align-items: center; justify-content: center;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 95%; max-height: 95vh; object-fit: contain; border-radius: 8px; }
+
+  /* Export-Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--good); color: white; padding: 12px 24px;
+    border-radius: 8px; font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    z-index: 200;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Mahly</div>
+  <div class="stats">
+    <div class="stat">Total: <b id="total-count">100</b></div>
+    <div class="stat">Bewertet: <b id="rated-count">0</b></div>
+    <div class="stat">⌀ Score: <b id="avg-score">–</b></div>
+    <div class="stat">Re-Render: <b id="rerender-count">0</b></div>
+    <div class="stat">Löschen: <b id="delete-count">0</b></div>
+  </div>
+  <div class="controls">
+    <button class="btn-secondary btn" onclick="exportJSON()">📋 Export JSON</button>
+    <button class="btn-secondary btn" onclick="exportCSV()">📊 Export CSV</button>
+    <button class="btn" onclick="exportRerenderList()">🔄 Re-Render-Liste</button>
+  </div>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+<div class="filter-bar">
+  <label>Filter:</label>
+  <button class="filter-btn active" data-filter="all">Alle (100)</button>
+  <button class="filter-btn" data-filter="unrated">Noch nicht bewertet</button>
+  <button class="filter-btn" data-filter="quality-low">Quality &lt; 8.0</button>
+  <button class="filter-btn" data-filter="rerender">Re-Render markiert</button>
+  <button class="filter-btn" data-filter="delete">Löschen markiert</button>
+  <label style="margin-left: 16px;">Sortierung:</label>
+  <button class="filter-btn active" data-sort="quality">Quality (niedrig zuerst)</button>
+  <button class="filter-btn" data-sort="title">Titel A-Z</button>
+</div>
+
+<main id="grid"></main>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" alt="">
+</div>
+
+<div class="toast" id="toast">Gespeichert</div>
+
+<script>
+const STORAGE_KEY = 'mahly_light_breakfast_review_v1';
+
+const RECIPES = [
+{"slug":"tofu-fruehstuecks-bowl-mit-raeuchertofu-tomate-und-kraeutern","title":"Tofu-Frühstücks-Bowl mit Räuchertofu, Tomate und Kräutern","quality":6.8,"kcal":351,"protein":23.4},
+{"slug":"protein-shake-mit-banane-hafermilch-und-whey","title":"Protein-Shake mit Banane, Hafermilch und Whey","quality":7.2,"kcal":268,"protein":22},
+{"slug":"chia-pudding-high-protein-mit-magerquark-und-beeren","title":"Chia-Pudding High-Protein mit Magerquark und Beeren","quality":7.4,"kcal":335,"protein":34},
+{"slug":"vegane-protein-pancakes-mit-soja-joghurt","title":"Vegane Protein-Pancakes mit Soja-Joghurt","quality":7.4,"kcal":300,"protein":20},
+{"slug":"eiweiss-pancakes-mit-beeren-und-skyr-topping","title":"Eiweiß-Pancakes mit Beeren und Skyr-Topping","quality":7.6,"kcal":361,"protein":37.9},
+{"slug":"high-protein-pancakes-mit-banane-und-magerquark","title":"High-Protein Pancakes mit Banane und Magerquark","quality":7.6,"kcal":319,"protein":22.6},
+{"slug":"veganes-protein-porridge-mit-sojamilch-und-erbsenprotein","title":"Veganes Protein-Porridge mit Sojamilch und Erbsenprotein","quality":7.6,"kcal":400,"protein":24},
+{"slug":"haferflocken-eiweiss-pancakes-mit-heidelbeeren","title":"Haferflocken-Eiweiß-Pancakes mit Heidelbeeren","quality":7.8,"kcal":392,"protein":20.5},
+{"slug":"schoko-protein-smoothie-mit-erdnussbutter-und-banane","title":"Schoko-Protein-Smoothie mit Erdnussbutter und Banane","quality":7.8,"kcal":318,"protein":28.5},
+{"slug":"asiatisches-huehner-congee-mit-fruehlingszwiebeln","title":"Asiatisches Hühner-Congee mit Frühlingszwiebeln","quality":8.0,"kcal":443,"protein":35.7},
+{"slug":"chia-pudding-kakao-protein-mit-erdnussmus","title":"Chia-Pudding Kakao-Protein mit Erdnussmus","quality":8.0,"kcal":390,"protein":28},
+{"slug":"eier-im-tomatennest-mit-basilikum","title":"Eier-im-Tomatennest mit Basilikum","quality":8.0,"kcal":376,"protein":22.2},
+{"slug":"eierpfannkuchen-mit-magerquark-fuellung","title":"Eierpfannkuchen mit Magerquark-Füllung","quality":8.0,"kcal":446,"protein":29},
+{"slug":"eiweiss-omelette-mit-pilzen-und-petersilie","title":"Eiweiß-Omelette mit Pilzen und Petersilie","quality":8.0,"kcal":294,"protein":29.5},
+{"slug":"eiweissbrot-stulle-mit-putenschinken-und-tomate","title":"Eiweißbrot-Stulle mit Putenschinken und Tomate","quality":8.0,"kcal":280,"protein":35},
+{"slug":"frittata-light-mit-zucchini-und-kraeutern","title":"Frittata Light mit Zucchini und Kräutern","quality":8.0,"kcal":285,"protein":26},
+{"slug":"hafer-pancakes-mit-magerquark-topping","title":"Hafer-Pancakes mit Magerquark-Topping","quality":8.0,"kcal":397,"protein":28.3},
+{"slug":"israelisches-light-fruehstueck-mit-magerquark-und-ei","title":"Israelisches Light-Frühstück mit Magerquark und Ei","quality":8.0,"kcal":310,"protein":33},
+{"slug":"japanisches-onigiri-fruehstueck-mit-thunfisch-und-reis","title":"Japanisches Onigiri-Frühstück mit Thunfisch und Reis","quality":8.0,"kcal":414,"protein":21.1},
+{"slug":"kraeuter-omelette-mit-huettenkaese-fuellung","title":"Kräuter-Omelette mit Hüttenkäse-Füllung","quality":8.0,"kcal":345,"protein":39.9},
+{"slug":"nordisches-power-fruehstueck-mit-magerquark-und-raeucherlachs","title":"Nordisches Power-Frühstück mit Magerquark und Räucherlachs","quality":8.0,"kcal":380,"protein":29.9},
+{"slug":"pochiertes-ei-auf-spinatbett-mit-kirschtomaten","title":"Pochiertes Ei auf Spinatbett mit Kirschtomaten","quality":8.0,"kcal":432,"protein":38.2},
+{"slug":"protein-quark-mit-kakao-und-banane","title":"Protein-Quark mit Kakao und Banane","quality":8.0,"kcal":378,"protein":27.9},
+{"slug":"skyr-bowl-mit-banane-und-erdnussmus","title":"Skyr-Bowl mit Banane und Erdnussmus","quality":8.0,"kcal":357,"protein":29.6},
+{"slug":"skyr-mit-selbstgemachtem-apfelmus-und-walnuessen","title":"Skyr mit selbstgemachtem Apfelmus und Walnüssen","quality":8.0,"kcal":330,"protein":21.8},
+{"slug":"skyr-pancakes-mit-apfel-und-zimt","title":"Skyr-Pancakes mit Apfel und Zimt","quality":8.0,"kcal":346,"protein":23.2},
+{"slug":"skyr-to-go-mit-geroesteten-haferflocken","title":"Skyr-To-Go mit gerösteten Haferflocken","quality":8.0,"kcal":385,"protein":26.7},
+{"slug":"tuerkisches-menemen-light-mit-magerkaese","title":"Türkisches Menemen Light mit Magerkäse","quality":8.0,"kcal":381,"protein":26.2},
+{"slug":"vegan-high-protein-smoothie-mit-soja-joghurt-und-beeren","title":"Vegan High-Protein Smoothie mit Soja-Joghurt und Beeren","quality":8.0,"kcal":340,"protein":21},
+{"slug":"vegane-overnight-oats-mit-erbsenprotein-und-mandel","title":"Vegane Overnight Oats mit Erbsenprotein und Mandel","quality":8.0,"kcal":420,"protein":24},
+{"slug":"vollkorn-bananen-pancakes-mit-huettenkaese","title":"Vollkorn-Bananen-Pancakes mit Hüttenkäse","quality":8.0,"kcal":383,"protein":26.8},
+{"slug":"beeren-protein-smoothie-mit-magerquark","title":"Beeren-Protein-Smoothie mit Magerquark","quality":8.2,"kcal":325,"protein":26},
+{"slug":"eiweissbrot-stulle-vegan-mit-hummus-und-gurke","title":"Eiweißbrot-Stulle vegan mit Hummus und Gurke","quality":8.2,"kcal":270,"protein":23.1},
+{"slug":"eiweissbrot-vegan-mit-erdnussmus-und-banane","title":"Eiweißbrot vegan mit Erdnussmus und Banane","quality":8.2,"kcal":330,"protein":20},
+{"slug":"huettenkaese-bowl-mit-ananas-und-chiasamen","title":"Hüttenkäse-Bowl mit Ananas und Chiasamen","quality":8.2,"kcal":270,"protein":22},
+{"slug":"indisches-masala-omelette-mit-tomate-und-koriander","title":"Indisches Masala-Omelette mit Tomate und Koriander","quality":8.2,"kcal":288,"protein":23.6},
+{"slug":"knaeckebrot-mit-magerquark-kresse-und-putenaufschnitt","title":"Knäckebrot mit Magerquark, Kresse und Putenaufschnitt","quality":8.2,"kcal":380,"protein":20.6},
+{"slug":"koreanisches-reisporridge-juk-mit-haehnchen-und-sesam","title":"Koreanisches Reisporridge (Juk) mit Hähnchen und Sesam","quality":8.2,"kcal":380,"protein":34},
+{"slug":"magerquark-becher-mit-beeren-und-walnuessen","title":"Magerquark-Becher mit Beeren und Walnüssen","quality":8.2,"kcal":285,"protein":21},
+{"slug":"magerquark-mit-pfirsich-und-geroesteten-mandeln","title":"Magerquark mit Pfirsich und gerösteten Mandeln","quality":8.2,"kcal":402,"protein":29.7},
+{"slug":"mediterranes-fruehstueck-mit-huettenkaese-avocado-und-cherrytomaten","title":"Mediterranes Frühstück mit Hüttenkäse, Avocado und Cherrytomaten","quality":8.2,"kcal":350,"protein":24},
+{"slug":"mexikanisches-light-fruehstueck-mit-eiern-und-schwarzen-bohnen","title":"Mexikanisches Light-Frühstück mit Eiern und schwarzen Bohnen","quality":8.2,"kcal":392,"protein":22.6},
+{"slug":"overnight-oats-protein-mit-magerquark-und-beeren","title":"Overnight Oats Protein mit Magerquark und Beeren","quality":8.2,"kcal":322,"protein":30},
+{"slug":"quark-crepes-light-mit-erdbeeren","title":"Quark-Crêpes Light mit Erdbeeren","quality":8.2,"kcal":365,"protein":20.9},
+{"slug":"schoko-protein-pancakes-mit-erdnussmus","title":"Schoko-Protein-Pancakes mit Erdnussmus","quality":8.2,"kcal":435,"protein":22.1},
+{"slug":"cloud-eier-mit-magerem-speck-und-schnittlauch","title":"Cloud-Eier mit magerem Speck und Schnittlauch","quality":8.4,"kcal":286,"protein":32.4},
+{"slug":"cottage-cheese-stulle-mit-schnittlauch-und-radieschen","title":"Cottage-Cheese-Stulle mit Schnittlauch und Radieschen","quality":8.4,"kcal":380,"protein":28},
+{"slug":"eier-spinat-pfanne-mit-feta-low-carb","title":"Eier-Spinat-Pfanne mit Feta (low-carb)","quality":8.4,"kcal":346,"protein":21.9},
+{"slug":"eiweissbrot-mit-magerquark-apfel-und-walnuessen","title":"Eiweißbrot mit Magerquark, Apfel und Walnüssen","quality":8.4,"kcal":317,"protein":21.7},
+{"slug":"englisches-light-breakfast-mit-eiern-pilzen-und-gegrillter-tomate","title":"Englisches Light-Breakfast mit Eiern, Pilzen und gegrillter Tomate","quality":8.4,"kcal":416,"protein":25.6},
+{"slug":"franzoesisches-light-fruehstueck-mit-magerquark-und-beeren","title":"Französisches Light-Frühstück mit Magerquark und Beeren","quality":8.4,"kcal":271,"protein":20.8},
+{"slug":"japanisches-tamago-kake-gohan-ei-ueber-reis","title":"Japanisches Tamago Kake Gohan (Ei über Reis)","quality":8.4,"kcal":400,"protein":23},
+{"slug":"knaeckebrot-plate-mit-huettenkaese-tomate-und-kuerbiskernen","title":"Knäckebrot-Plate mit Hüttenkäse, Tomate und Kürbiskernen","quality":8.4,"kcal":358,"protein":27},
+{"slug":"magerquark-mit-pflaumenmus-und-zimt","title":"Magerquark mit Pflaumenmus und Zimt","quality":8.4,"kcal":259,"protein":21.8},
+{"slug":"overnight-oats-schoko-protein-mit-banane","title":"Overnight Oats Schoko-Protein mit Banane","quality":8.4,"kcal":442,"protein":22.7},
+{"slug":"quark-smoothie-bowl-mit-banane-und-spinat","title":"Quark-Smoothie-Bowl mit Banane und Spinat","quality":8.4,"kcal":391,"protein":21.2},
+{"slug":"roggenbrot-mit-huettenkaese-putenbrust-und-gurke","title":"Roggenbrot mit Hüttenkäse, Putenbrust und Gurke","quality":8.4,"kcal":295,"protein":28},
+{"slug":"skyr-parfait-mit-beeren-und-geroesteten-haferflocken","title":"Skyr-Parfait mit Beeren und gerösteten Haferflocken","quality":8.4,"kcal":300,"protein":21},
+{"slug":"soja-joghurt-bowl-mit-beeren-und-hanfsamen","title":"Soja-Joghurt-Bowl mit Beeren und Hanfsamen","quality":8.4,"kcal":284,"protein":23.5},
+{"slug":"vollkorn-sandwich-mit-magerquark-und-raeucherlachs","title":"Vollkorn-Sandwich mit Magerquark und Räucherlachs","quality":8.4,"kcal":337,"protein":25},
+{"slug":"vollkornstulle-mit-magerquark-und-radieschen","title":"Vollkornstulle mit Magerquark und Radieschen","quality":8.4,"kcal":306,"protein":20.4},
+{"slug":"brasilianisches-tapioca-pancake-mit-huettenkaese-und-beeren","title":"Brasilianisches Tapioca-Pancake mit Hüttenkäse und Beeren","quality":8.6,"kcal":340,"protein":22},
+{"slug":"eiweiss-frittata-mit-brokkoli-und-haehnchenbrust","title":"Eiweiß-Frittata mit Brokkoli und Hähnchenbrust","quality":8.6,"kcal":280,"protein":35},
+{"slug":"eiweissbrot-stulle-mit-huettenkaese-avocado-und-sprossen","title":"Eiweißbrot-Stulle mit Hüttenkäse, Avocado und Sprossen","quality":8.6,"kcal":340,"protein":22},
+{"slug":"gruener-protein-smoothie-mit-spinat-mango-und-skyr","title":"Grüner Protein-Smoothie mit Spinat, Mango und Skyr","quality":8.6,"kcal":293,"protein":20.2},
+{"slug":"high-protein-quark-mit-beeren-und-vanille","title":"High-Protein Quark mit Beeren und Vanille","quality":8.6,"kcal":389,"protein":23.9},
+{"slug":"huettenkaese-bowl-mit-honigmelone-und-minze","title":"Hüttenkäse-Bowl mit Honigmelone und Minze","quality":8.6,"kcal":255,"protein":21},
+{"slug":"kichererbsen-pfanne-orientalisch-mit-tomate-und-spinat","title":"Kichererbsen-Pfanne orientalisch mit Tomate und Spinat","quality":8.6,"kcal":419,"protein":27.3},
+{"slug":"magerquark-bowl-mit-erdbeeren-und-leinsamen","title":"Magerquark-Bowl mit Erdbeeren und Leinsamen","quality":8.6,"kcal":299,"protein":22.6},
+{"slug":"magerquark-suess-mit-beeren-coulis-und-granola","title":"Magerquark süß mit Beeren-Coulis und Granola","quality":8.6,"kcal":417,"protein":26.2},
+{"slug":"ruehrei-mit-raeucherlachs-und-dill-low-carb","title":"Rührei mit Räucherlachs und Dill (low-carb)","quality":8.6,"kcal":302,"protein":27.7},
+{"slug":"shakshuka-light-mit-reduzierter-tomatensauce","title":"Shakshuka Light mit reduzierter Tomatensauce","quality":8.6,"kcal":330,"protein":21.1},
+{"slug":"skyr-mit-muesli-und-geroesteten-sonnenblumenkernen","title":"Skyr mit Müsli und gerösteten Sonnenblumenkernen","quality":8.6,"kcal":413,"protein":36.2},
+{"slug":"sojaquark-bowl-mit-mango-und-cashews","title":"Sojaquark-Bowl mit Mango und Cashews","quality":8.6,"kcal":402,"protein":34.8},
+{"slug":"spiegelei-auf-avocado-bett-mit-cherrytomaten","title":"Spiegelei auf Avocado-Bett mit Cherrytomaten","quality":8.6,"kcal":350,"protein":27},
+{"slug":"tofu-scramble-mit-champignons-und-tomate","title":"Tofu-Scramble mit Champignons und Tomate","quality":8.6,"kcal":397,"protein":37.9},
+{"slug":"vollkorn-huettenkaese-toast-mit-avocado","title":"Vollkorn-Hüttenkäse-Toast mit Avocado","quality":8.6,"kcal":340,"protein":22},
+{"slug":"edamame-fruehstuecks-bowl-mit-reis-und-avocado","title":"Edamame-Frühstücks-Bowl mit Reis und Avocado","quality":8.8,"kcal":380,"protein":22},
+{"slug":"eiweiss-french-toast-mit-vollkornbrot-und-beeren","title":"Eiweiß-French-Toast mit Vollkornbrot und Beeren","quality":8.8,"kcal":251,"protein":23.2},
+{"slug":"griechisches-light-fruehstueck-mit-joghurt-honig-und-nuessen","title":"Griechisches Light-Frühstück mit Joghurt, Honig und Nüssen","quality":8.8,"kcal":280,"protein":24},
+{"slug":"huettenkaese-bowl-herzhaft-mit-tomate-gurke-und-kresse","title":"Hüttenkäse-Bowl herzhaft mit Tomate, Gurke und Kresse","quality":8.8,"kcal":322,"protein":29},
+{"slug":"magerquark-bowl-mit-himbeeren-und-chiasamen","title":"Magerquark-Bowl mit Himbeeren und Chiasamen","quality":8.8,"kcal":291,"protein":22.4},
+{"slug":"magerquark-mit-aprikose-und-walnuessen","title":"Magerquark mit Aprikose und Walnüssen","quality":8.8,"kcal":300,"protein":31},
+{"slug":"magerquark-mit-kuerbiskernen-und-geriebenem-apfel","title":"Magerquark mit Kürbiskernen und geriebenem Apfel","quality":8.8,"kcal":257,"protein":21.5},
+{"slug":"marokkanisches-fruehstueck-mit-avocado-ei-und-tomate","title":"Marokkanisches Frühstück mit Avocado, Ei und Tomate","quality":8.8,"kcal":345,"protein":25},
+{"slug":"pumpernickel-mit-magerquark-raeucherlachs-und-dill","title":"Pumpernickel mit Magerquark, Räucherlachs und Dill","quality":8.8,"kcal":266,"protein":21.9},
+{"slug":"roggenstulle-nordisch-mit-huettenkaese-und-kresse","title":"Roggenstulle nordisch mit Hüttenkäse und Kresse","quality":8.8,"kcal":330,"protein":23},
+{"slug":"ruehrei-mit-magerem-haehnchenschinken-und-kresse","title":"Rührei mit magerem Hähnchenschinken und Kresse","quality":8.8,"kcal":266,"protein":22.3},
+{"slug":"skyr-bowl-mit-granola-und-geriebenem-apfel","title":"Skyr-Bowl mit Granola und geriebenem Apfel","quality":8.8,"kcal":378,"protein":26.9},
+{"slug":"tuerkisches-light-fruehstueck-mit-huettenkaese-und-oliven","title":"Türkisches Light-Frühstück mit Hüttenkäse und Oliven","quality":8.8,"kcal":340,"protein":20},
+{"slug":"vegane-protein-bowl-mit-quinoa-beeren-und-mandelmus","title":"Vegane Protein-Bowl mit Quinoa, Beeren und Mandelmus","quality":8.8,"kcal":415,"protein":25},
+{"slug":"vegane-sojaschnitzel-stulle-mit-hummus-und-gurke","title":"Vegane Sojaschnitzel-Stulle mit Hummus und Gurke","quality":8.8,"kcal":380,"protein":22},
+{"slug":"cottage-cheese-bowl-mit-beeren-und-mandelmus","title":"Cottage-Cheese-Bowl mit Beeren und Mandelmus","quality":9.0,"kcal":386,"protein":36.3},
+{"slug":"light-omelette-mit-tomate-spinat-und-feta","title":"Light-Omelette mit Tomate, Spinat und Feta","quality":9.0,"kcal":360,"protein":28.2},
+{"slug":"skyr-bowl-mit-mango-und-kokoschips","title":"Skyr-Bowl mit Mango und Kokoschips","quality":9.0,"kcal":255,"protein":23.3},
+{"slug":"tofu-scramble-mit-spinat-und-kurkuma","title":"Tofu-Scramble mit Spinat und Kurkuma","quality":9.0,"kcal":375,"protein":42.9},
+{"slug":"vollkornbrot-mit-huettenkaese-tomate-und-pfeffer","title":"Vollkornbrot mit Hüttenkäse, Tomate und Pfeffer","quality":9.0,"kcal":300,"protein":23},
+{"slug":"indisches-linsen-fruehstueck-mit-spinat-dal","title":"Indisches Linsen-Frühstück mit Spinat (Dal)","quality":9.2,"kcal":386,"protein":22.4},
+{"slug":"vollkornstulle-mit-huettenkaese-kresse-und-spiegelei","title":"Vollkornstulle mit Hüttenkäse, Kresse und Spiegelei","quality":9.2,"kcal":380,"protein":24},
+{"slug":"magerquark-bowl-mit-heidelbeeren-und-mandelsplittern","title":"Magerquark-Bowl mit Heidelbeeren und Mandelsplittern","quality":9.4,"kcal":321,"protein":23.2}
+];
+
+const IMG_BASE = 'https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/';
+
+// State
+let state = {};
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) state = JSON.parse(saved);
+} catch(e) {}
+
+let currentFilter = 'all';
+let currentSort = 'quality';
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  updateStats();
+  toast('Auto-gespeichert');
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+function getRecipeState(slug) {
+  return state[slug] || { rating: null, comment: '', action: null };
+}
+
+function setRating(slug, rating) {
+  const s = getRecipeState(slug);
+  s.rating = s.rating === rating ? null : rating;
+  state[slug] = s;
+  saveState();
+  renderCardRating(slug);
+  updateCardBorder(slug);
+}
+
+function setAction(slug, action) {
+  const s = getRecipeState(slug);
+  s.action = s.action === action ? null : action;
+  state[slug] = s;
+  saveState();
+  renderCardAction(slug);
+}
+
+function setComment(slug, comment) {
+  const s = getRecipeState(slug);
+  s.comment = comment;
+  state[slug] = s;
+  saveState();
+}
+
+function renderCardRating(slug) {
+  const card = document.querySelector(`[data-slug="${slug}"]`);
+  if (!card) return;
+  const s = getRecipeState(slug);
+  card.querySelectorAll('.rating-btn').forEach(btn => {
+    const val = parseInt(btn.dataset.value);
+    btn.classList.toggle('selected', val === s.rating);
+    btn.classList.remove('good', 'mid', 'bad');
+    if (val === s.rating) {
+      if (val <= 4) btn.classList.add('bad');
+      else if (val <= 7) btn.classList.add('mid');
+      else btn.classList.add('good');
+    }
+  });
+}
+
+function renderCardAction(slug) {
+  const card = document.querySelector(`[data-slug="${slug}"]`);
+  if (!card) return;
+  const s = getRecipeState(slug);
+  card.querySelectorAll('.action-btn').forEach(btn => {
+    const act = btn.dataset.action;
+    btn.classList.toggle('active', act === s.action);
+    btn.classList.remove('ok', 'rerender', 'delete');
+    if (act === s.action) btn.classList.add(act);
+  });
+}
+
+function updateCardBorder(slug) {
+  const card = document.querySelector(`[data-slug="${slug}"]`);
+  if (!card) return;
+  const s = getRecipeState(slug);
+  card.classList.remove('rated-good', 'rated-mid', 'rated-bad');
+  if (s.rating !== null) {
+    if (s.rating <= 4) card.classList.add('rated-bad');
+    else if (s.rating <= 7) card.classList.add('rated-mid');
+    else card.classList.add('rated-good');
+  }
+}
+
+function updateStats() {
+  const total = RECIPES.length;
+  const rated = Object.values(state).filter(s => s.rating !== null).length;
+  const ratings = Object.values(state).filter(s => s.rating !== null).map(s => s.rating);
+  const avg = ratings.length ? (ratings.reduce((a,b) => a+b, 0) / ratings.length).toFixed(1) : '–';
+  const rerender = Object.values(state).filter(s => s.action === 'rerender').length;
+  const del = Object.values(state).filter(s => s.action === 'delete').length;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('rated-count').textContent = rated;
+  document.getElementById('avg-score').textContent = avg;
+  document.getElementById('rerender-count').textContent = rerender;
+  document.getElementById('delete-count').textContent = del;
+  document.getElementById('progress-fill').style.width = (rated / total * 100) + '%';
+}
+
+function getQualityClass(q) {
+  if (q < 8.0) return 'q-low';
+  if (q < 8.5) return 'q-mid';
+  return 'q-high';
+}
+
+function renderCard(recipe) {
+  const s = getRecipeState(recipe.slug);
+  const qClass = getQualityClass(recipe.quality);
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.slug = recipe.slug;
+
+  card.innerHTML = `
+    <div class="card-img-wrap" onclick="openLightbox('${IMG_BASE}${recipe.slug}.png')">
+      <img src="${IMG_BASE}${recipe.slug}.png" alt="${recipe.title}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23F5EDDE%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 font-size=%228%22 fill=%22%235C4A3E%22>Bild fehlt</text></svg>'">
+    </div>
+    <div class="card-meta">
+      <h3 class="card-title">${recipe.title}</h3>
+      <div class="card-stats">
+        <span class="card-stat"><b>${recipe.kcal}</b> kcal</span>
+        <span class="card-stat"><b>${recipe.protein}g</b> Protein</span>
+        <span class="card-stat quality-badge ${qClass}">Q: <b>${recipe.quality}</b></span>
+      </div>
+      <div class="rating-row">
+        ${[1,2,3,4,5,6,7,8,9,10].map(n => `
+          <button class="rating-btn" data-value="${n}" onclick="setRating('${recipe.slug}', ${n})">${n}</button>
+        `).join('')}
+      </div>
+      <textarea class="comment-area" placeholder="Kommentar (was passt nicht? z.B. Komposition, Beleuchtung, Garnitur...)"
+        onchange="setComment('${recipe.slug}', this.value)">${(s.comment || '').replace(/"/g, '&quot;')}</textarea>
+      <div class="action-row">
+        <button class="action-btn" data-action="ok" onclick="setAction('${recipe.slug}', 'ok')">✓ Behalten</button>
+        <button class="action-btn" data-action="rerender" onclick="setAction('${recipe.slug}', 'rerender')">🔄 Re-Render</button>
+        <button class="action-btn" data-action="delete" onclick="setAction('${recipe.slug}', 'delete')">🗑️ Löschen</button>
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+function applyFilterAndSort() {
+  let list = [...RECIPES];
+
+  // Filter
+  if (currentFilter === 'unrated') {
+    list = list.filter(r => getRecipeState(r.slug).rating === null);
+  } else if (currentFilter === 'quality-low') {
+    list = list.filter(r => r.quality < 8.0);
+  } else if (currentFilter === 'rerender') {
+    list = list.filter(r => getRecipeState(r.slug).action === 'rerender');
+  } else if (currentFilter === 'delete') {
+    list = list.filter(r => getRecipeState(r.slug).action === 'delete');
+  }
+
+  // Sort
+  if (currentSort === 'title') {
+    list.sort((a, b) => a.title.localeCompare(b.title));
+  } else {
+    list.sort((a, b) => a.quality - b.quality);
+  }
+
+  return list;
+}
+
+function renderAll() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const list = applyFilterAndSort();
+  list.forEach(r => {
+    const card = renderCard(r);
+    grid.appendChild(card);
+    renderCardRating(r.slug);
+    renderCardAction(r.slug);
+    updateCardBorder(r.slug);
+  });
+  updateStats();
+}
+
+// Filter buttons
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderAll();
+  });
+});
+document.querySelectorAll('[data-sort]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSort = btn.dataset.sort;
+    renderAll();
+  });
+});
+
+// Lightbox
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+// Export
+function exportJSON() {
+  const data = RECIPES.map(r => ({
+    slug: r.slug,
+    title: r.title,
+    quality_score: r.quality,
+    kcal: r.kcal,
+    protein: r.protein,
+    tim_rating: getRecipeState(r.slug).rating,
+    tim_comment: getRecipeState(r.slug).comment || '',
+    tim_action: getRecipeState(r.slug).action || ''
+  }));
+  downloadFile('mahly-light-breakfast-review.json', JSON.stringify(data, null, 2));
+}
+
+function exportCSV() {
+  const headers = ['slug','title','quality_score','kcal','protein','tim_rating','tim_comment','tim_action'];
+  const rows = RECIPES.map(r => {
+    const s = getRecipeState(r.slug);
+    return [
+      r.slug, r.title, r.quality, r.kcal, r.protein,
+      s.rating ?? '', (s.comment || '').replace(/[\n"]/g, ' '), s.action || ''
+    ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+  });
+  downloadFile('mahly-light-breakfast-review.csv', [headers.join(','), ...rows].join('\n'));
+}
+
+function exportRerenderList() {
+  const rerender = RECIPES.filter(r => getRecipeState(r.slug).action === 'rerender');
+  const del = RECIPES.filter(r => getRecipeState(r.slug).action === 'delete');
+  const lines = [
+    '═══ Re-Render-Liste ═══',
+    `Re-Render (${rerender.length}):`,
+    ...rerender.map(r => `  - ${r.slug}  // ${getRecipeState(r.slug).comment || '(kein Kommentar)'}`),
+    '',
+    `Löschen (${del.length}):`,
+    ...del.map(r => `  - ${r.slug}  // ${getRecipeState(r.slug).comment || '(kein Kommentar)'}`),
+    '',
+    '═══ SQL-Snippet für Re-Render-Vorbereitung ═══',
+    'DELETE FROM recipe_images WHERE recipe_id IN (',
+    '  SELECT id FROM recipes WHERE slug IN (',
+    ...rerender.map((r, i) => `    '${r.slug}'${i < rerender.length - 1 ? ',' : ''}`),
+    '  )',
+    ');'
+  ];
+  downloadFile('mahly-rerender-liste.txt', lines.join('\n'));
+}
+
+function downloadFile(name, content) {
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(`Heruntergeladen: ${name}`);
+}
+
+// Init
+renderAll();
+</script>
+</body>
+</html>
