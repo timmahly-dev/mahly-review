@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Mahly · Low-Carb Review (30 Bilder)</title>
+<style>
+  :root {
+    --orange: #E8763B;
+    --orange-dark: #C45A24;
+    --cream: #FFF8F0;
+    --cream-dark: #F5EDDE;
+    --ink: #2A1F18;
+    --ink-soft: #5C4A3E;
+    --good: #6BAF6B;
+    --warn: #D9A93C;
+    --bad: #C84B2F;
+    --neutral: #8E7F73;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--cream); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--cream); border-bottom: 2px solid var(--orange);
+    padding: 16px 24px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+  .logo { font-size: 28px; font-weight: 700; color: var(--orange); letter-spacing: -1px; }
+  .stats { display: flex; gap: 16px; flex: 1; font-size: 14px; flex-wrap: wrap; }
+  .stat { background: var(--cream-dark); padding: 6px 12px; border-radius: 8px; }
+  .stat b { color: var(--orange); }
+  .controls { display: flex; gap: 8px; }
+  .btn { background: var(--orange); color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.15s; }
+  .btn:hover { background: var(--orange-dark); }
+  .btn-secondary { background: white; color: var(--orange); border: 1.5px solid var(--orange); }
+  .btn-secondary:hover { background: var(--cream-dark); }
+
+  .progress-bar { height: 4px; background: var(--cream-dark); position: sticky; top: 76px; z-index: 99; }
+  .progress-fill { height: 100%; background: var(--orange); width: 0%; transition: width 0.3s; }
+
+  .filter-bar { background: var(--cream-dark); padding: 12px 24px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #E0D6C5; }
+  .filter-bar label { font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-right: 4px; }
+  .filter-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid #D0C0AD; background: white; cursor: pointer; font-size: 13px; }
+  .filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+  main { padding: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 24px; max-width: 1800px; margin: 0 auto; }
+  .card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); display: flex; flex-direction: column; transition: transform 0.15s, box-shadow 0.15s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+  .card.rated-good { border-top: 4px solid var(--good); }
+  .card.rated-mid { border-top: 4px solid var(--warn); }
+  .card.rated-bad { border-top: 4px solid var(--bad); }
+
+  .card-img-wrap { width: 100%; aspect-ratio: 1/1; background: var(--cream-dark); cursor: zoom-in; }
+  .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .card-meta { padding: 16px; }
+  .card-title { font-size: 15px; font-weight: 600; line-height: 1.3; margin: 0 0 8px; }
+  .card-stats { display: flex; gap: 12px; font-size: 12px; color: var(--ink-soft); margin-bottom: 12px; flex-wrap: wrap; }
+  .card-stat { background: var(--cream-dark); padding: 3px 8px; border-radius: 6px; }
+  .card-stat b { color: var(--orange); }
+  .quality-badge { font-weight: 600; }
+  .quality-badge.q-low { color: var(--bad); }
+  .quality-badge.q-mid { color: var(--warn); }
+  .quality-badge.q-high { color: var(--good); }
+
+  .rating-row { display: flex; gap: 4px; margin: 8px 0; flex-wrap: nowrap; justify-content: space-between; }
+  .rating-btn { flex: 1; min-width: 0; aspect-ratio: 1/1; padding: 0; border-radius: 8px; border: 1.5px solid #D0C0AD; background: white; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--ink-soft); transition: all 0.1s; }
+  .rating-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .rating-btn.selected { background: var(--orange); border-color: var(--orange); color: white; transform: scale(1.05); }
+  .rating-btn.selected.bad { background: var(--bad); border-color: var(--bad); }
+  .rating-btn.selected.mid { background: var(--warn); border-color: var(--warn); }
+  .rating-btn.selected.good { background: var(--good); border-color: var(--good); }
+
+  .comment-area { width: 100%; min-height: 60px; max-height: 200px; border: 1.5px solid #D0C0AD; border-radius: 8px; padding: 8px 10px; font-family: inherit; font-size: 13px; resize: vertical; box-sizing: border-box; background: var(--cream); }
+  .comment-area:focus { outline: none; border-color: var(--orange); }
+
+  .action-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .action-btn { flex: 1; min-width: 100px; padding: 8px; border-radius: 6px; border: 1.5px solid #D0C0AD; background: white; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+  .action-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .action-btn.active.ok { background: var(--good); border-color: var(--good); color: white; }
+  .action-btn.active.rerender { background: var(--warn); border-color: var(--warn); color: white; }
+  .action-btn.active.delete { background: var(--bad); border-color: var(--bad); color: white; }
+
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(42, 31, 24, 0.95); z-index: 1000; cursor: zoom-out; padding: 40px; align-items: center; justify-content: center; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 95%; max-height: 95vh; object-fit: contain; border-radius: 8px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--good); color: white; padding: 12px 24px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 200; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Mahly</div>
+  <div class="stats">
+    <div class="stat">Total: <b id="total-count">30</b></div>
+    <div class="stat">Bewertet: <b id="rated-count">0</b></div>
+    <div class="stat">⌀ Score: <b id="avg-score">–</b></div>
+    <div class="stat">Re-Render: <b id="rerender-count">0</b></div>
+    <div class="stat">Löschen: <b id="delete-count">0</b></div>
+  </div>
+  <div class="controls">
+    <button class="btn-secondary btn" onclick="exportJSON()">📋 Export JSON</button>
+    <button class="btn-secondary btn" onclick="exportCSV()">📊 Export CSV</button>
+    <button class="btn" onclick="exportRerenderList()">🔄 Re-Render-Liste</button>
+  </div>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+<div class="filter-bar">
+  <label>Filter:</label>
+  <button class="filter-btn active" data-filter="all">Alle (30)</button>
+  <button class="filter-btn" data-filter="unrated">Noch nicht bewertet</button>
+  <button class="filter-btn" data-filter="quality-low">Quality &lt; 8.0</button>
+  <button class="filter-btn" data-filter="rerender">Re-Render markiert</button>
+  <button class="filter-btn" data-filter="delete">Löschen markiert</button>
+  <label style="margin-left: 16px;">Sortierung:</label>
+  <button class="filter-btn active" data-sort="quality">Quality (niedrig zuerst)</button>
+  <button class="filter-btn" data-sort="title">Titel A-Z</button>
+</div>
+
+<main id="grid"></main>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" alt="">
+</div>
+
+<div class="toast" id="toast">Gespeichert</div>
+
+<script>
+const STORAGE_KEY = 'mahly_low_carb_review_v1';
+const IMG_BASE = 'https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/';
+
+const RECIPES = [
+{"slug":"garnelen-curry-mit-kokosmilch-und-spinat-keto","title":"Garnelen-Curry mit Kokosmilch und Spinat (Keto)","quality":4.0,"kcal":430,"protein":34,"carbs":6.9},
+{"slug":"eier-curry-indisch-mit-kokosmilch-und-spinat-low-carb","title":"Eier-Curry indisch mit Kokosmilch und Spinat (low-carb)","quality":7.8,"kcal":557,"protein":30.4,"carbs":10.5},
+{"slug":"schweinefilet-im-speckmantel-mit-brokkoli-keto","title":"Schweinefilet im Speckmantel mit Brokkoli (Keto)","quality":8.0,"kcal":520,"protein":60,"carbs":5},
+{"slug":"thunfisch-bohnen-pfanne-mit-olivenoel-low-carb","title":"Thunfisch-Bohnen-Pfanne mit Olivenöl (low-carb)","quality":8.0,"kcal":411,"protein":34.1,"carbs":12.1},
+{"slug":"wolfsbarsch-mit-olivenoel-kraeuter-marinade-low-carb","title":"Wolfsbarsch mit Olivenöl-Kräuter-Marinade (low-carb)","quality":8.0,"kcal":400,"protein":50,"carbs":3},
+{"slug":"pute-cordon-bleu-mit-brokkoli-low-carb","title":"Pute Cordon Bleu mit Brokkoli (low-carb)","quality":8.2,"kcal":520,"protein":60,"carbs":5},
+{"slug":"rindersteak-mit-champignons-in-sahnesauce-low-carb","title":"Rindersteak mit Champignons in Sahnesauce (low-carb)","quality":8.2,"kcal":608,"protein":50.8,"carbs":5.5},
+{"slug":"blumenkohl-reis-bibimbap-low-carb","title":"Blumenkohl-Reis Bibimbap (low-carb)","quality":8.6,"kcal":450,"protein":40,"carbs":18},
+{"slug":"blumenkohl-risotto-mit-pilzen-low-carb","title":"Blumenkohl-Risotto mit Pilzen (low-carb)","quality":8.6,"kcal":390,"protein":22,"carbs":18},
+{"slug":"lachs-avocado-salat-bowl-mit-limette","title":"Lachs-Avocado-Salat-Bowl mit Limette","quality":8.6,"kcal":640,"protein":35.7,"carbs":7.6},
+{"slug":"blumenkohl-reis-nasi-goreng-mit-haehnchen","title":"Blumenkohl-Reis Nasi-Goreng mit Hähnchen","quality":8.8,"kcal":530,"protein":45.1,"carbs":25.7},
+{"slug":"hackfleisch-spinat-auflauf-mit-kaese-keto","title":"Hackfleisch-Spinat-Auflauf mit Käse (Keto)","quality":8.8,"kcal":580,"protein":58,"carbs":8},
+{"slug":"haehnchen-brokkoli-pfanne-mit-mandelbutter-low-carb","title":"Hähnchen-Brokkoli-Pfanne mit Mandelbutter (low-carb)","quality":8.8,"kcal":420,"protein":52,"carbs":6},
+{"slug":"haehnchen-mediterran-bowl-mit-oliven-und-feta","title":"Hähnchen-Mediterran-Bowl mit Oliven und Feta","quality":8.8,"kcal":470,"protein":42,"carbs":14},
+{"slug":"haehnchen-spinat-bowl-mit-feta-und-olivenoel","title":"Hähnchen-Spinat-Bowl mit Feta und Olivenöl","quality":8.8,"kcal":480,"protein":42,"carbs":12},
+{"slug":"rindfleisch-pak-choi-pfanne-mit-sojasauce","title":"Rindfleisch-Pak-Choi-Pfanne mit Sojasauce","quality":8.8,"kcal":450,"protein":40,"carbs":12},
+{"slug":"spinat-frittata-mit-raeucherlachs-keto","title":"Spinat-Frittata mit Räucherlachs (Keto)","quality":8.8,"kcal":416,"protein":37.8,"carbs":3.4},
+{"slug":"thunfisch-steak-mit-avocado-salsa-keto","title":"Thunfisch-Steak mit Avocado-Salsa (Keto)","quality":8.8,"kcal":568,"protein":48.8,"carbs":4.6},
+{"slug":"zucchini-nudel-carbonara-mit-zoodles","title":"Zucchini-Nudel-Carbonara mit Zoodles","quality":8.8,"kcal":420,"protein":28,"carbs":10},
+{"slug":"zucchini-nudeln-mit-bolognese-zoodles","title":"Zucchini-Nudeln mit Bolognese (Zoodles)","quality":8.8,"kcal":575,"protein":34.8,"carbs":27.3},
+{"slug":"blumenkohl-reis-haehnchen-curry-low-carb","title":"Blumenkohl-Reis Hähnchen-Curry (low-carb)","quality":9.0,"kcal":605,"protein":42.7,"carbs":19.6},
+{"slug":"garnelen-zucchini-pfanne-mit-knoblauchbutter","title":"Garnelen-Zucchini-Pfanne mit Knoblauchbutter","quality":9.0,"kcal":386,"protein":31.3,"carbs":7.7},
+{"slug":"lachs-spinat-bowl-mit-avocado-und-sesamoel","title":"Lachs-Spinat-Bowl mit Avocado und Sesamöl","quality":9.0,"kcal":520,"protein":40,"carbs":12},
+{"slug":"putenbrust-brokkoli-mandel-pfanne-low-carb","title":"Putenbrust-Brokkoli-Mandel-Pfanne (low-carb)","quality":9.0,"kcal":420,"protein":50,"carbs":5},
+{"slug":"rinderfilet-champignon-pfanne-low-carb","title":"Rinderfilet-Champignon-Pfanne (low-carb)","quality":9.0,"kcal":471,"protein":37.8,"carbs":6.6},
+{"slug":"zucchini-cannelloni-spinat-ricotta-keto","title":"Zucchini-Cannelloni Spinat-Ricotta (Keto)","quality":9.0,"kcal":694,"protein":56.8,"carbs":16.2},
+{"slug":"zucchini-lasagne-mit-hackfleisch-keto","title":"Zucchini-Lasagne mit Hackfleisch (Keto)","quality":9.0,"kcal":580,"protein":46,"carbs":18},
+{"slug":"gegrillter-lachs-mit-gebratenem-spinat-low-carb","title":"Gegrillter Lachs mit gebratenem Spinat (low-carb)","quality":9.2,"kcal":536,"protein":43,"carbs":2.6},
+{"slug":"haehnchen-saltimbocca-mit-spinat-keto","title":"Hähnchen-Saltimbocca mit Spinat (Keto)","quality":9.2,"kcal":550,"protein":68.7,"carbs":1.7},
+{"slug":"lachsfilet-in-mandel-kruste-mit-spargel-keto","title":"Lachsfilet in Mandel-Kruste mit Spargel (Keto)","quality":9.2,"kcal":696,"protein":49.1,"carbs":12.1}
+];
+
+let state = {};
+try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) state = JSON.parse(saved); } catch(e) {}
+
+let currentFilter = 'all';
+let currentSort = 'quality';
+
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); updateStats(); toast('Auto-gespeichert'); }
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 1500); }
+function getRecipeState(slug) { return state[slug] || { rating: null, comment: '', action: null }; }
+
+function setRating(slug, rating) {
+  const s = getRecipeState(slug);
+  s.rating = s.rating === rating ? null : rating;
+  state[slug] = s; saveState(); renderCardRating(slug); updateCardBorder(slug);
+}
+function setAction(slug, action) {
+  const s = getRecipeState(slug);
+  s.action = s.action === action ? null : action;
+  state[slug] = s; saveState(); renderCardAction(slug);
+}
+function setComment(slug, comment) {
+  const s = getRecipeState(slug); s.comment = comment; state[slug] = s; saveState();
+}
+
+function renderCardRating(slug) {
+  const card = document.querySelector(`[data-slug="${slug}"]`); if (!card) return;
+  const s = getRecipeState(slug);
+  card.querySelectorAll('.rating-btn').forEach(btn => {
+    const val = parseInt(btn.dataset.value);
+    btn.classList.toggle('selected', val === s.rating);
+    btn.classList.remove('good', 'mid', 'bad');
+    if (val === s.rating) {
+      if (val <= 4) btn.classList.add('bad');
+      else if (val <= 7) btn.classList.add('mid');
+      else btn.classList.add('good');
+    }
+  });
+}
+function renderCardAction(slug) {
+  const card = document.querySelector(`[data-slug="${slug}"]`); if (!card) return;
+  const s = getRecipeState(slug);
+  card.querySelectorAll('.action-btn').forEach(btn => {
+    const act = btn.dataset.action;
+    btn.classList.toggle('active', act === s.action);
+    btn.classList.remove('ok', 'rerender', 'delete');
+    if (act === s.action) btn.classList.add(act);
+  });
+}
+function updateCardBorder(slug) {
+  const card = document.querySelector(`[data-slug="${slug}"]`); if (!card) return;
+  const s = getRecipeState(slug);
+  card.classList.remove('rated-good', 'rated-mid', 'rated-bad');
+  if (s.rating !== null) {
+    if (s.rating <= 4) card.classList.add('rated-bad');
+    else if (s.rating <= 7) card.classList.add('rated-mid');
+    else card.classList.add('rated-good');
+  }
+}
+
+function updateStats() {
+  const total = RECIPES.length;
+  const rated = Object.values(state).filter(s => s.rating !== null).length;
+  const ratings = Object.values(state).filter(s => s.rating !== null).map(s => s.rating);
+  const avg = ratings.length ? (ratings.reduce((a,b) => a+b, 0) / ratings.length).toFixed(1) : '–';
+  const rerender = Object.values(state).filter(s => s.action === 'rerender').length;
+  const del = Object.values(state).filter(s => s.action === 'delete').length;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('rated-count').textContent = rated;
+  document.getElementById('avg-score').textContent = avg;
+  document.getElementById('rerender-count').textContent = rerender;
+  document.getElementById('delete-count').textContent = del;
+  document.getElementById('progress-fill').style.width = (rated / total * 100) + '%';
+}
+
+function getQualityClass(q) { if (q < 8.0) return 'q-low'; if (q < 8.5) return 'q-mid'; return 'q-high'; }
+
+function renderCard(recipe) {
+  const s = getRecipeState(recipe.slug);
+  const qClass = getQualityClass(recipe.quality);
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.slug = recipe.slug;
+  card.innerHTML = `
+    <div class="card-img-wrap" onclick="openLightbox('${IMG_BASE}${recipe.slug}.png')">
+      <img src="${IMG_BASE}${recipe.slug}.png" alt="${recipe.title}" loading="lazy">
+    </div>
+    <div class="card-meta">
+      <h3 class="card-title">${recipe.title}</h3>
+      <div class="card-stats">
+        <span class="card-stat"><b>${recipe.kcal}</b> kcal</span>
+        <span class="card-stat"><b>${recipe.protein}g</b> Protein</span>
+        <span class="card-stat"><b>${recipe.carbs}g</b> Carbs</span>
+        <span class="card-stat quality-badge ${qClass}">Q: <b>${recipe.quality}</b></span>
+      </div>
+      <div class="rating-row">
+        ${[1,2,3,4,5,6,7,8,9,10].map(n => `<button class="rating-btn" data-value="${n}" onclick="setRating('${recipe.slug}', ${n})">${n}</button>`).join('')}
+      </div>
+      <textarea class="comment-area" placeholder="Kommentar (was passt nicht?)" onchange="setComment('${recipe.slug}', this.value)">${(s.comment || '').replace(/"/g, '&quot;')}</textarea>
+      <div class="action-row">
+        <button class="action-btn" data-action="ok" onclick="setAction('${recipe.slug}', 'ok')">✓ Behalten</button>
+        <button class="action-btn" data-action="rerender" onclick="setAction('${recipe.slug}', 'rerender')">🔄 Re-Render</button>
+        <button class="action-btn" data-action="delete" onclick="setAction('${recipe.slug}', 'delete')">🗑️ Löschen</button>
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+function applyFilterAndSort() {
+  let list = [...RECIPES];
+  if (currentFilter === 'unrated') list = list.filter(r => getRecipeState(r.slug).rating === null);
+  else if (currentFilter === 'quality-low') list = list.filter(r => r.quality < 8.0);
+  else if (currentFilter === 'rerender') list = list.filter(r => getRecipeState(r.slug).action === 'rerender');
+  else if (currentFilter === 'delete') list = list.filter(r => getRecipeState(r.slug).action === 'delete');
+  if (currentSort === 'title') list.sort((a, b) => a.title.localeCompare(b.title));
+  else list.sort((a, b) => a.quality - b.quality);
+  return list;
+}
+
+function renderAll() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const list = applyFilterAndSort();
+  list.forEach(r => {
+    const card = renderCard(r);
+    grid.appendChild(card);
+    renderCardRating(r.slug);
+    renderCardAction(r.slug);
+    updateCardBorder(r.slug);
+  });
+  updateStats();
+}
+
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderAll();
+  });
+});
+document.querySelectorAll('[data-sort]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSort = btn.dataset.sort;
+    renderAll();
+  });
+});
+
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+function exportJSON() {
+  const data = RECIPES.map(r => ({
+    slug: r.slug, title: r.title, quality_score: r.quality, kcal: r.kcal, protein: r.protein, carbs: r.carbs,
+    tim_rating: getRecipeState(r.slug).rating, tim_comment: getRecipeState(r.slug).comment || '', tim_action: getRecipeState(r.slug).action || ''
+  }));
+  downloadFile('mahly-low-carb-review.json', JSON.stringify(data, null, 2));
+}
+function exportCSV() {
+  const headers = ['slug','title','quality_score','kcal','protein','carbs','tim_rating','tim_comment','tim_action'];
+  const rows = RECIPES.map(r => {
+    const s = getRecipeState(r.slug);
+    return [r.slug, r.title, r.quality, r.kcal, r.protein, r.carbs, s.rating ?? '', (s.comment || '').replace(/[\n"]/g, ' '), s.action || ''].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+  });
+  downloadFile('mahly-low-carb-review.csv', [headers.join(','), ...rows].join('\n'));
+}
+function exportRerenderList() {
+  const rerender = RECIPES.filter(r => getRecipeState(r.slug).action === 'rerender');
+  const del = RECIPES.filter(r => getRecipeState(r.slug).action === 'delete');
+  const lines = [
+    '═══ Re-Render-Liste ═══',
+    `Re-Render (${rerender.length}):`,
+    ...rerender.map(r => `  - ${r.slug}  // ${getRecipeState(r.slug).comment || '(kein Kommentar)'}`),
+    '',
+    `Löschen (${del.length}):`,
+    ...del.map(r => `  - ${r.slug}  // ${getRecipeState(r.slug).comment || '(kein Kommentar)'}`)
+  ];
+  downloadFile('mahly-low-carb-rerender-liste.txt', lines.join('\n'));
+}
+function downloadFile(name, content) {
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(`Heruntergeladen: ${name}`);
+}
+
+renderAll();
+</script>
+</body>
+</html>
