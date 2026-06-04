@@ -89,6 +89,11 @@ footer{text-align:center;padding:24px 18px 50px;color:var(--mute);font-size:13px
 </div>
 
 <script>
+// V1-Bilder = Supabase Archive-Folder (von Claude 2026-06-04 dort hochgeladen)
+// V2-Bilder = Supabase Live (aktuelle Version)
+// → Beide Bilder kommen online — Tim braucht NUR die HTML zu GitHub uploaden
+var SUPA = 'https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/';
+var ARCHIVE = SUPA + '_archive-light-breakfast-v1-20260604/';
 var DATA = [
   {
     "slug": "tofu-fruehstuecks-bowl-mit-raeuchertofu-tomate-und-kraeutern",
@@ -96,8 +101,8 @@ var DATA = [
     "orig_freundin": "6", "orig_komm": "Etwas viele Kräuter",
     "score_v1": "6.8", "score_v2": 8.0,
     "v2_ai_comment": "", "v2_failure": "none",
-    "v1_img": "./tofu-fruehstuecks-bowl-mit-raeuchertofu-tomate-und-kraeutern_V1.png",
-    "v2_img": "./tofu-fruehstuecks-bowl-mit-raeuchertofu-tomate-und-kraeutern_V2.png"
+    "v1_img": ARCHIVE + "tofu-fruehstuecks-bowl-mit-raeuchertofu-tomate-und-kraeutern.png",
+    "v2_img": SUPA + "tofu-fruehstuecks-bowl-mit-raeuchertofu-tomate-und-kraeutern.png"
   },
   {
     "slug": "chia-pudding-high-protein-mit-magerquark-und-beeren",
@@ -105,8 +110,8 @@ var DATA = [
     "orig_freundin": "8", "orig_komm": "Gläser sind unten offen? 1-2 Gläser reichen aus.",
     "score_v1": "7.4", "score_v2": 9.0,
     "v2_ai_comment": "", "v2_failure": "none",
-    "v1_img": "./chia-pudding-high-protein-mit-magerquark-und-beeren_V1.png",
-    "v2_img": "./chia-pudding-high-protein-mit-magerquark-und-beeren_V2.png"
+    "v1_img": ARCHIVE + "chia-pudding-high-protein-mit-magerquark-und-beeren.png",
+    "v2_img": SUPA + "chia-pudding-high-protein-mit-magerquark-und-beeren.png"
   },
   {
     "slug": "overnight-oats-protein-mit-magerquark-und-beeren",
@@ -114,8 +119,8 @@ var DATA = [
     "orig_freundin": "8", "orig_komm": "Das Glas unten auf dem Bild sieht unförmig aus. Es reichen 1-2 Gläser.",
     "score_v1": "8.2", "score_v2": 8.6,
     "v2_ai_comment": "", "v2_failure": "none",
-    "v1_img": "./overnight-oats-protein-mit-magerquark-und-beeren_V1.png",
-    "v2_img": "./overnight-oats-protein-mit-magerquark-und-beeren_V2.png"
+    "v1_img": ARCHIVE + "overnight-oats-protein-mit-magerquark-und-beeren.png",
+    "v2_img": SUPA + "overnight-oats-protein-mit-magerquark-und-beeren.png"
   },
   {
     "slug": "high-protein-quark-mit-beeren-und-vanille",
@@ -123,8 +128,8 @@ var DATA = [
     "orig_freundin": "9", "orig_komm": "Die Vanillestange muss weg",
     "score_v1": "8.6", "score_v2": 8.6,
     "v2_ai_comment": "", "v2_failure": "none",
-    "v1_img": "./high-protein-quark-mit-beeren-und-vanille_V1.png",
-    "v2_img": "./high-protein-quark-mit-beeren-und-vanille_V2.png"
+    "v1_img": ARCHIVE + "high-protein-quark-mit-beeren-und-vanille.png",
+    "v2_img": SUPA + "high-protein-quark-mit-beeren-und-vanille.png"
   },
   {
     "slug": "sojaquark-bowl-mit-mango-und-cashews",
@@ -132,8 +137,8 @@ var DATA = [
     "orig_freundin": "9", "orig_komm": "Zu viele Cashews",
     "score_v1": "8.6", "score_v2": 8.4,
     "v2_ai_comment": "", "v2_failure": "none",
-    "v1_img": "./sojaquark-bowl-mit-mango-und-cashews_V1.png",
-    "v2_img": "./sojaquark-bowl-mit-mango-und-cashews_V2.png"
+    "v1_img": ARCHIVE + "sojaquark-bowl-mit-mango-und-cashews.png",
+    "v2_img": SUPA + "sojaquark-bowl-mit-mango-und-cashews.png"
   },
   {
     "slug": "skyr-bowl-mit-granola-und-geriebenem-apfel",
@@ -141,8 +146,8 @@ var DATA = [
     "orig_freundin": "8", "orig_komm": "Zu viel Granola",
     "score_v1": "8.8", "score_v2": 9.0,
     "v2_ai_comment": "", "v2_failure": "none",
-    "v1_img": "./skyr-bowl-mit-granola-und-geriebenem-apfel_V1.png",
-    "v2_img": "./skyr-bowl-mit-granola-und-geriebenem-apfel_V2.png"
+    "v1_img": ARCHIVE + "skyr-bowl-mit-granola-und-geriebenem-apfel.png",
+    "v2_img": SUPA + "skyr-bowl-mit-granola-und-geriebenem-apfel.png"
   }
 ];
 var STORAGE_VERDICTS = 'mahly-light-breakfast-v2-verdicts';
