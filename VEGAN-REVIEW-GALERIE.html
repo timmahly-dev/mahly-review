@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Mahly · Vegan Review (30 Bilder)</title>
+<style>
+  :root {
+    --orange: #E8763B;
+    --orange-dark: #C45A24;
+    --cream: #FFF8F0;
+    --cream-dark: #F5EDDE;
+    --ink: #2A1F18;
+    --ink-soft: #5C4A3E;
+    --good: #6BAF6B;
+    --warn: #D9A93C;
+    --bad: #C84B2F;
+    --neutral: #8E7F73;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--cream); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+  header { position: sticky; top: 0; z-index: 100; background: var(--cream); border-bottom: 2px solid var(--orange); padding: 16px 24px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+  .logo { font-size: 28px; font-weight: 700; color: var(--orange); letter-spacing: -1px; }
+  .stats { display: flex; gap: 16px; flex: 1; font-size: 14px; flex-wrap: wrap; }
+  .stat { background: var(--cream-dark); padding: 6px 12px; border-radius: 8px; }
+  .stat b { color: var(--orange); }
+  .controls { display: flex; gap: 8px; }
+  .btn { background: var(--orange); color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.15s; }
+  .btn:hover { background: var(--orange-dark); }
+  .btn-secondary { background: white; color: var(--orange); border: 1.5px solid var(--orange); }
+  .btn-secondary:hover { background: var(--cream-dark); }
+
+  .progress-bar { height: 4px; background: var(--cream-dark); position: sticky; top: 76px; z-index: 99; }
+  .progress-fill { height: 100%; background: var(--orange); width: 0%; transition: width 0.3s; }
+
+  .filter-bar { background: var(--cream-dark); padding: 12px 24px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #E0D6C5; }
+  .filter-bar label { font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-right: 4px; }
+  .filter-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid #D0C0AD; background: white; cursor: pointer; font-size: 13px; }
+  .filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+  main { padding: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 24px; max-width: 1800px; margin: 0 auto; }
+  .card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); display: flex; flex-direction: column; transition: transform 0.15s, box-shadow 0.15s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+  .card.rated-good { border-top: 4px solid var(--good); }
+  .card.rated-mid { border-top: 4px solid var(--warn); }
+  .card.rated-bad { border-top: 4px solid var(--bad); }
+
+  .card-img-wrap { width: 100%; aspect-ratio: 1/1; background: var(--cream-dark); cursor: zoom-in; }
+  .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .card-meta { padding: 16px; }
+  .card-title { font-size: 15px; font-weight: 600; line-height: 1.3; margin: 0 0 8px; }
+  .card-stats { display: flex; gap: 12px; font-size: 12px; color: var(--ink-soft); margin-bottom: 12px; flex-wrap: wrap; }
+  .card-stat { background: var(--cream-dark); padding: 3px 8px; border-radius: 6px; }
+  .card-stat b { color: var(--orange); }
+  .quality-badge { font-weight: 600; }
+  .quality-badge.q-low { color: var(--bad); }
+  .quality-badge.q-mid { color: var(--warn); }
+  .quality-badge.q-high { color: var(--good); }
+
+  .rating-row { display: flex; gap: 4px; margin: 8px 0; flex-wrap: nowrap; justify-content: space-between; }
+  .rating-btn { flex: 1; min-width: 0; aspect-ratio: 1/1; padding: 0; border-radius: 8px; border: 1.5px solid #D0C0AD; background: white; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--ink-soft); transition: all 0.1s; }
+  .rating-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .rating-btn.selected { background: var(--orange); border-color: var(--orange); color: white; transform: scale(1.05); }
+  .rating-btn.selected.bad { background: var(--bad); border-color: var(--bad); }
+  .rating-btn.selected.mid { background: var(--warn); border-color: var(--warn); }
+  .rating-btn.selected.good { background: var(--good); border-color: var(--good); }
+
+  .comment-area { width: 100%; min-height: 60px; max-height: 200px; border: 1.5px solid #D0C0AD; border-radius: 8px; padding: 8px 10px; font-family: inherit; font-size: 13px; resize: vertical; box-sizing: border-box; background: var(--cream); }
+  .comment-area:focus { outline: none; border-color: var(--orange); }
+
+  .action-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .action-btn { flex: 1; min-width: 100px; padding: 8px; border-radius: 6px; border: 1.5px solid #D0C0AD; background: white; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+  .action-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .action-btn.active.ok { background: var(--good); border-color: var(--good); color: white; }
+  .action-btn.active.rerender { background: var(--warn); border-color: var(--warn); color: white; }
+  .action-btn.active.delete { background: var(--bad); border-color: var(--bad); color: white; }
+
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(42, 31, 24, 0.95); z-index: 1000; cursor: zoom-out; padding: 40px; align-items: center; justify-content: center; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 95%; max-height: 95vh; object-fit: contain; border-radius: 8px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--good); color: white; padding: 12px 24px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 200; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Mahly</div>
+  <div class="stats">
+    <div class="stat">Total: <b id="total-count">30</b></div>
+    <div class="stat">Bewertet: <b id="rated-count">0</b></div>
+    <div class="stat">⌀ Score: <b id="avg-score">–</b></div>
+    <div class="stat">Re-Render: <b id="rerender-count">0</b></div>
+    <div class="stat">Löschen: <b id="delete-count">0</b></div>
+  </div>
+  <div class="controls">
+    <button class="btn-secondary btn" onclick="exportJSON()">📋 Export JSON</button>
+    <button class="btn-secondary btn" onclick="exportCSV()">📊 Export CSV</button>
+    <button class="btn" onclick="exportRerenderList()">🔄 Re-Render-Liste</button>
+  </div>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+<div class="filter-bar">
+  <label>Filter:</label>
+  <button class="filter-btn active" data-filter="all">Alle (30)</button>
+  <button class="filter-btn" data-filter="unrated">Noch nicht bewertet</button>
+  <button class="filter-btn" data-filter="quality-low">Quality &lt; 8.0</button>
+  <button class="filter-btn" data-filter="rerender">Re-Render markiert</button>
+  <button class="filter-btn" data-filter="delete">Löschen markiert</button>
+  <label style="margin-left: 16px;">Sortierung:</label>
+  <button class="filter-btn active" data-sort="quality">Quality (niedrig zuerst)</button>
+  <button class="filter-btn" data-sort="title">Titel A-Z</button>
+</div>
+
+<main id="grid"></main>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" alt="">
+</div>
+
+<div class="toast" id="toast">Gespeichert</div>
+
+<script>
+const STORAGE_KEY = 'mahly_vegan_review_v1';
+const IMG_BASE = 'https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/';
+
+const RECIPES = [
+{"slug":"veganes-marokkanisches-tajine-mit-kichererbsen-und-aprikosen","title":"Veganes Marokkanisches Tajine mit Kichererbsen und Aprikosen","quality":4.0,"kcal":614,"protein":21.4,"carbs":88.4},
+{"slug":"vegane-mexikanische-burrito-bowl-mit-bohnen-und-reis","title":"Vegane Mexikanische Burrito-Bowl mit Bohnen und Reis","quality":7.8,"kcal":580,"protein":22,"carbs":80},
+{"slug":"linsen-spinat-eintopf-mit-kokosmilch-vegan","title":"Linsen-Spinat-Eintopf mit Kokosmilch (vegan)","quality":8.0,"kcal":596,"protein":29.6,"carbs":39.8},
+{"slug":"vegane-lasagne-mit-linsen-bolognese-und-cashew-bechamel","title":"Vegane Lasagne mit Linsen-Bolognese und Cashew-Béchamel","quality":8.0,"kcal":620,"protein":32,"carbs":78},
+{"slug":"vegane-spaghetti-aglio-e-olio-mit-raeuchertofu","title":"Vegane Spaghetti aglio e olio mit Räuchertofu","quality":8.0,"kcal":613,"protein":22.9,"carbs":69.8},
+{"slug":"vegane-tagliatelle-mit-pilz-sahne-sauce-und-raeuchertofu","title":"Vegane Tagliatelle mit Pilz-Sahne-Sauce und Räuchertofu","quality":8.0,"kcal":580,"protein":30,"carbs":60},
+{"slug":"veganer-auberginen-auflauf-mit-tomaten-und-cashew-kaese","title":"Veganer Auberginen-Auflauf mit Tomaten und Cashew-Käse","quality":8.0,"kcal":533,"protein":15.5,"carbs":29.6},
+{"slug":"veganes-thai-curry-rot-mit-tofu-und-suesskartoffel","title":"Veganes Thai-Curry rot mit Tofu und Süßkartoffel","quality":8.0,"kcal":580,"protein":28,"carbs":65},
+{"slug":"vegane-mediterrane-bowl-mit-gegrilltem-halloumi-tofu-und-hummus","title":"Vegane Mediterrane Bowl mit gegrilltem Halloumi-Tofu und Hummus","quality":8.2,"kcal":580,"protein":32,"carbs":60},
+{"slug":"vegane-moussaka-mit-linsen-und-cashew-bechamel","title":"Vegane Moussaka mit Linsen und Cashew-Béchamel","quality":8.2,"kcal":580,"protein":26,"carbs":60},
+{"slug":"vegane-pasta-al-pesto-mit-cashewkernen-und-basilikum","title":"Vegane Pasta al Pesto mit Cashewkernen und Basilikum","quality":8.2,"kcal":620,"protein":24,"carbs":75},
+{"slug":"vegane-penne-all-arrabbiata-mit-sojahack","title":"Vegane Penne all'Arrabbiata mit Sojahack","quality":8.2,"kcal":629,"protein":17,"carbs":96.3},
+{"slug":"vegane-power-bowl-mit-tempeh-quinoa-und-edamame","title":"Vegane Power-Bowl mit Tempeh, Quinoa und Edamame","quality":8.2,"kcal":600,"protein":22,"carbs":60},
+{"slug":"vegane-spaghetti-carbonara-mit-raeuchertofu-und-cashew-sahne","title":"Vegane Spaghetti Carbonara mit Räuchertofu und Cashew-Sahne","quality":8.2,"kcal":580,"protein":33,"carbs":65},
+{"slug":"veganer-linsen-walnuss-burger-mit-avocado-sauce","title":"Veganer Linsen-Walnuss-Burger mit Avocado-Sauce","quality":8.2,"kcal":530,"protein":18,"carbs":28},
+{"slug":"veganer-pulled-tempeh-burger-mit-bbq-sauce","title":"Veganer Pulled-Tempeh-Burger mit BBQ-Sauce","quality":8.2,"kcal":570,"protein":26,"carbs":62},
+{"slug":"veganer-reisnudel-salat-asiatisch-mit-erdnusssauce-und-tofu","title":"Veganer Reisnudel-Salat asiatisch mit Erdnusssauce und Tofu","quality":8.2,"kcal":600,"protein":30,"carbs":65},
+{"slug":"veganes-massaman-curry-mit-tempeh-und-erdnuessen","title":"Veganes Massaman-Curry mit Tempeh und Erdnüssen","quality":8.2,"kcal":580,"protein":25,"carbs":65},
+{"slug":"vegane-paella-mit-gegrilltem-gemuese-und-geraeuchertem-tofu","title":"Vegane Paella mit gegrilltem Gemüse und geräuchertem Tofu","quality":8.4,"kcal":580,"protein":24.1,"carbs":75.2},
+{"slug":"veganer-bohnen-mais-chili-mit-quinoa","title":"Veganer Bohnen-Mais-Chili mit Quinoa","quality":8.4,"kcal":620,"protein":22,"carbs":80},
+{"slug":"veganes-linsen-curry-mit-kokosmilch-dal-tadka","title":"Veganes Linsen-Curry mit Kokosmilch (Dal Tadka)","quality":8.6,"kcal":580,"protein":30,"carbs":70},
+{"slug":"vegane-falafel-wraps-mit-tahini-joghurt-sauce","title":"Vegane Falafel-Wraps mit Tahini-Joghurt-Sauce","quality":8.8,"kcal":633,"protein":20.7,"carbs":70.1},
+{"slug":"veganer-aethiopischer-linseneintopf-misir-wat","title":"Veganer äthiopischer Linseneintopf (Misir Wat)","quality":8.8,"kcal":470,"protein":22.9,"carbs":50.5},
+{"slug":"veganes-auberginen-curry-indisch-baingan-bharta","title":"Veganes Auberginen-Curry indisch (Baingan Bharta)","quality":8.8,"kcal":380,"protein":14,"carbs":40},
+{"slug":"vegane-buddha-bowl-mit-geroesteten-kichererbsen-und-tahini","title":"Vegane Buddha-Bowl mit gerösteten Kichererbsen und Tahini","quality":9.0,"kcal":580,"protein":28,"carbs":60},
+{"slug":"vegane-suesskartoffel-bowl-mit-schwarzen-bohnen-und-avocado","title":"Vegane Süßkartoffel-Bowl mit schwarzen Bohnen und Avocado","quality":9.0,"kcal":580,"protein":18,"carbs":80},
+{"slug":"veganer-linsen-hackbraten-mit-pilzsauce","title":"Veganer Linsen-Hackbraten mit Pilzsauce","quality":9.0,"kcal":653,"protein":28.5,"carbs":71.1},
+{"slug":"veganes-asia-stir-fry-mit-tofu-pak-choi-und-cashews","title":"Veganes Asia-Stir-Fry mit Tofu, Pak Choi und Cashews","quality":9.0,"kcal":580,"protein":28,"carbs":60},
+{"slug":"veganes-shepherd-s-pie-mit-linsen-und-suesskartoffelpueree","title":"Veganes Shepherd's Pie mit Linsen und Süßkartoffelpüree","quality":9.0,"kcal":620,"protein":24,"carbs":90},
+{"slug":"vegane-tofu-spinat-pfanne-mit-cashew-kokos-sauce","title":"Vegane Tofu-Spinat-Pfanne mit Cashew-Kokos-Sauce","quality":9.2,"kcal":580,"protein":28,"carbs":50}
+];
+
+let state = {};
+try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) state = JSON.parse(saved); } catch(e) {}
+
+let currentFilter = 'all';
+let currentSort = 'quality';
+
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); updateStats(); toast('Auto-gespeichert'); }
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 1500); }
+function getRecipeState(slug) { return state[slug] || { rating: null, comment: '', action: null }; }
+
+function setRating(slug, rating) {
+  const s = getRecipeState(slug);
+  s.rating = s.rating === rating ? null : rating;
+  state[slug] = s; saveState(); renderCardRating(slug); updateCardBorder(slug);
+}
+function setAction(slug, action) {
+  const s = getRecipeState(slug);
+  s.action = s.action === action ? null : action;
+  state[slug] = s; saveState(); renderCardAction(slug);
+}
+function setComment(slug, comment) {
+  const s = getRecipeState(slug); s.comment = comment; state[slug] = s; saveState();
+}
+
+function renderCardRating(slug) {
+  const card = document.querySelector(`[data-slug="${slug}"]`); if (!card) return;
+  const s = getRecipeState(slug);
+  card.querySelectorAll('.rating-btn').forEach(btn => {
+    const val = parseInt(btn.dataset.value);
+    btn.classList.toggle('selected', val === s.rating);
+    btn.classList.remove('good', 'mid', 'bad');
+    if (val === s.rating) {
+      if (val <= 4) btn.classList.add('bad');
+      else if (val <= 7) btn.classList.add('mid');
+      else btn.classList.add('good');
+    }
+  });
+}
+function renderCardAction(slug) {
+  const card = document.querySelector(`[data-slug="${slug}"]`); if (!card) return;
+  const s = getRecipeState(slug);
+  card.querySelectorAll('.action-btn').forEach(btn => {
+    const act = btn.dataset.action;
+    btn.classList.toggle('active', act === s.action);
+    btn.classList.remove('ok', 'rerender', 'delete');
+    if (act === s.action) btn.classList.add(act);
+  });
+}
+function updateCardBorder(slug) {
+  const card = document.querySelector(`[data-slug="${slug}"]`); if (!card) return;
+  const s = getRecipeState(slug);
+  card.classList.remove('rated-good', 'rated-mid', 'rated-bad');
+  if (s.rating !== null) {
+    if (s.rating <= 4) card.classList.add('rated-bad');
+    else if (s.rating <= 7) card.classList.add('rated-mid');
+    else card.classList.add('rated-good');
+  }
+}
+
+function updateStats() {
+  const total = RECIPES.length;
+  const rated = Object.values(state).filter(s => s.rating !== null).length;
+  const ratings = Object.values(state).filter(s => s.rating !== null).map(s => s.rating);
+  const avg = ratings.length ? (ratings.reduce((a,b) => a+b, 0) / ratings.length).toFixed(1) : '–';
+  const rerender = Object.values(state).filter(s => s.action === 'rerender').length;
+  const del = Object.values(state).filter(s => s.action === 'delete').length;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('rated-count').textContent = rated;
+  document.getElementById('avg-score').textContent = avg;
+  document.getElementById('rerender-count').textContent = rerender;
+  document.getElementById('delete-count').textContent = del;
+  document.getElementById('progress-fill').style.width = (rated / total * 100) + '%';
+}
+
+function getQualityClass(q) { if (q < 8.0) return 'q-low'; if (q < 8.5) return 'q-mid'; return 'q-high'; }
+
+function renderCard(recipe) {
+  const s = getRecipeState(recipe.slug);
+  const qClass = getQualityClass(recipe.quality);
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.slug = recipe.slug;
+  card.innerHTML = `
+    <div class="card-img-wrap" onclick="openLightbox('${IMG_BASE}${recipe.slug}.png')">
+      <img src="${IMG_BASE}${recipe.slug}.png" alt="${recipe.title}" loading="lazy">
+    </div>
+    <div class="card-meta">
+      <h3 class="card-title">${recipe.title}</h3>
+      <div class="card-stats">
+        <span class="card-stat"><b>${recipe.kcal}</b> kcal</span>
+        <span class="card-stat"><b>${recipe.protein}g</b> Protein</span>
+        <span class="card-stat"><b>${recipe.carbs}g</b> Carbs</span>
+        <span class="card-stat quality-badge ${qClass}">Q: <b>${recipe.quality}</b></span>
+      </div>
+      <div class="rating-row">
+        ${[1,2,3,4,5,6,7,8,9,10].map(n => `<button class="rating-btn" data-value="${n}" onclick="setRating('${recipe.slug}', ${n})">${n}</button>`).join('')}
+      </div>
+      <textarea class="comment-area" placeholder="Kommentar (was passt nicht?)" onchange="setComment('${recipe.slug}', this.value)">${(s.comment || '').replace(/"/g, '&quot;')}</textarea>
+      <div class="action-row">
+        <button class="action-btn" data-action="ok" onclick="setAction('${recipe.slug}', 'ok')">✓ Behalten</button>
+        <button class="action-btn" data-action="rerender" onclick="setAction('${recipe.slug}', 'rerender')">🔄 Re-Render</button>
+        <button class="action-btn" data-action="delete" onclick="setAction('${recipe.slug}', 'delete')">🗑️ Löschen</button>
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+function applyFilterAndSort() {
+  let list = [...RECIPES];
+  if (currentFilter === 'unrated') list = list.filter(r => getRecipeState(r.slug).rating === null);
+  else if (currentFilter === 'quality-low') list = list.filter(r => r.quality < 8.0);
+  else if (currentFilter === 'rerender') list = list.filter(r => getRecipeState(r.slug).action === 'rerender');
+  else if (currentFilter === 'delete') list = list.filter(r => getRecipeState(r.slug).action === 'delete');
+  if (currentSort === 'title') list.sort((a, b) => a.title.localeCompare(b.title));
+  else list.sort((a, b) => a.quality - b.quality);
+  return list;
+}
+
+function renderAll() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const list = applyFilterAndSort();
+  list.forEach(r => {
+    const card = renderCard(r);
+    grid.appendChild(card);
+    renderCardRating(r.slug);
+    renderCardAction(r.slug);
+    updateCardBorder(r.slug);
+  });
+  updateStats();
+}
+
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderAll();
+  });
+});
+document.querySelectorAll('[data-sort]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSort = btn.dataset.sort;
+    renderAll();
+  });
+});
+
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+function exportJSON() {
+  const data = RECIPES.map(r => ({
+    slug: r.slug, title: r.title, quality_score: r.quality, kcal: r.kcal, protein: r.protein, carbs: r.carbs,
+    tim_rating: getRecipeState(r.slug).rating, tim_comment: getRecipeState(r.slug).comment || '', tim_action: getRecipeState(r.slug).action || ''
+  }));
+  downloadFile('mahly-vegan-review.json', JSON.stringify(data, null, 2));
+}
+function exportCSV() {
+  const headers = ['slug','title','quality_score','kcal','protein','carbs','tim_rating','tim_comment','tim_action'];
+  const rows = RECIPES.map(r => {
+    const s = getRecipeState(r.slug);
+    return [r.slug, r.title, r.quality, r.kcal, r.protein, r.carbs, s.rating ?? '', (s.comment || '').replace(/[\n"]/g, ' '), s.action || ''].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+  });
+  downloadFile('mahly-vegan-review.csv', [headers.join(','), ...rows].join('\n'));
+}
+function exportRerenderList() {
+  const rerender = RECIPES.filter(r => getRecipeState(r.slug).action === 'rerender');
+  const del = RECIPES.filter(r => getRecipeState(r.slug).action === 'delete');
+  const lines = [
+    '═══ Re-Render-Liste ═══',
+    `Re-Render (${rerender.length}):`,
+    ...rerender.map(r => `  - ${r.slug}  // ${getRecipeState(r.slug).comment || '(kein Kommentar)'}`),
+    '',
+    `Löschen (${del.length}):`,
+    ...del.map(r => `  - ${r.slug}  // ${getRecipeState(r.slug).comment || '(kein Kommentar)'}`)
+  ];
+  downloadFile('mahly-vegan-rerender-liste.txt', lines.join('\n'));
+}
+function downloadFile(name, content) {
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(`Heruntergeladen: ${name}`);
+}
+
+renderAll();
+</script>
+</body>
+</html>
