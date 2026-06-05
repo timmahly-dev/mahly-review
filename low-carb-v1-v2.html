@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FF6B35">
+<title>Mahly · V1 → V2 · Low-Carb Re-Render</title>
+<style>
+:root { --o:#FF6B35; --o-soft:#FFE9DD; --bg:#FFF8F0; --ink:#1A1A1A;
+        --mute:#7a6f5c; --line:#EFE6D6; --card:#fff;
+        --green:#2D6A4F; --green-soft:#dff7e6; --red:#a82828; --red-soft:#fde0e0;
+        --orange:#9a6a1a; --orange-soft:#fbe6c9; --blue:#3a5a85; --blue-soft:#eef4ff; }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:15px}
+.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:12px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;box-shadow:0 1px 6px rgba(80,60,30,.06)}
+.brand{font-weight:800;font-size:18px}
+.brand small{color:var(--mute);font-weight:500;margin-left:6px;font-size:13px}
+.stat{font-size:13px;color:#555;padding:5px 11px;background:var(--bg);border-radius:8px}
+.stat strong{color:var(--o)}
+.list{padding:18px 14px 80px;display:flex;flex-direction:column;gap:18px;max-width:1500px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(80,60,30,.06)}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--line);background:var(--bg)}
+.card-title{font-weight:800;font-size:17px;line-height:1.25}
+.card-sub{font-size:12px;color:var(--mute);margin-top:3px}
+.quad{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
+.side{background:#fff;display:flex;flex-direction:column}
+.side h3{margin:0;padding:8px 10px;font-size:11px;font-weight:700;background:#f6efe1;color:var(--mute);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--line);text-align:center}
+.side.v2 h3{background:var(--green-soft);color:var(--green)}
+.side img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;cursor:zoom-in}
+.score-row{display:flex;gap:5px;padding:7px 10px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);font-size:11px}
+.badge{padding:3px 8px;border-radius:6px;font-weight:700;font-size:11px}
+.b-good{background:var(--green-soft);color:var(--green)}
+.b-mid{background:var(--orange-soft);color:var(--orange)}
+.b-low{background:var(--red-soft);color:var(--red)}
+.b-none{background:#eee;color:#777}
+.label{font-size:10px;color:var(--mute);font-weight:600}
+.komm-pro-bild{padding:7px 10px;border-top:1px solid var(--line);background:#fafafa;display:flex;flex-direction:column;gap:3px}
+.komm-pro-bild textarea{width:100%;font-family:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:5px;resize:vertical;min-height:42px;background:#fff}
+.komm-pro-bild textarea.has{border-color:var(--o);background:#fffaf6}
+.komm-pro-bild .lab{font-size:9px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.comment-block{padding:12px 18px;border-top:1px solid var(--line)}
+.comment-block.orig{background:var(--red-soft)}
+.comment-block.v4ai{background:#f6efe1}
+.comment-block.history{background:var(--blue-soft)}
+.comment-block h4{margin:0 0 4px;font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.comment-block .text{font-size:13px;line-height:1.45;color:#333}
+.comment-block.orig .text{color:#5a1c1c}
+.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700;margin-right:6px}
+.t-besser{background:var(--green-soft);color:var(--green)}
+.t-gleich{background:#eee;color:#555}
+.t-schlechter{background:var(--red-soft);color:var(--red)}
+.fixed-btn{display:flex;gap:8px;padding:10px 18px 14px;border-top:1px solid var(--line);background:#fff;flex-wrap:wrap}
+.fixed-btn label{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;user-select:none;background:#fff;min-height:44px}
+.fixed-btn label:has(input:checked){border-color:var(--o);background:var(--o-soft);color:var(--o)}
+.fixed-btn input{display:none}
+@media(max-width:560px){.quad{grid-template-columns:1fr}.komm-pro-bild textarea{font-size:16px;min-height:50px}}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:1000;padding:12px}
+.lightbox.open{display:flex}
+.lightbox img{max-width:calc(100% - 100px);max-height:calc(100% - 80px);object-fit:contain;border-radius:8px;user-select:none}
+.lb-btn{position:fixed;top:50%;transform:translateY(-50%);width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;border:none;font-size:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;font-weight:300;backdrop-filter:blur(8px);user-select:none;transition:opacity .2s}
+.lb-prev{left:14px}.lb-next{right:14px}
+.lb-close{position:fixed;top:14px;right:14px;width:44px;height:44px;font-size:26px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;border:none;cursor:pointer;backdrop-filter:blur(8px);font-weight:300}
+.lb-info{position:fixed;bottom:18px;left:0;right:0;text-align:center;color:rgba(255,255,255,.92);font-size:14px;padding:0 24px;text-shadow:0 1px 4px rgba(0,0,0,.5);pointer-events:none}
+.lb-info b{color:#fff;font-weight:700;display:block;font-size:16px;margin-bottom:3px}
+.lb-info .v-tag{display:inline-block;padding:2px 9px;border-radius:5px;background:rgba(255,255,255,.18);font-weight:700;margin-right:6px}
+@media(max-width:560px){.lb-btn{width:48px;height:48px;font-size:26px;background:rgba(255,255,255,.22)}.lb-prev{left:8px}.lb-next{right:8px}.lightbox img{max-width:calc(100% - 80px)}}
+footer{text-align:center;padding:24px 18px 50px;color:var(--mute);font-size:13px}
+</style></head><body>
+
+<div class="top">
+  <div class="brand">Mahly <small>V1 → V2 · 1 Low-Carb Re-Render</small></div>
+  <span class="stat" id="cnt"></span>
+  <button id="exportBtn" style="margin-left:auto;padding:9px 16px;border:1px solid var(--o);background:var(--o);color:#fff;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">CSV exportieren</button>
+</div>
+
+<div class="list" id="list"></div>
+
+<footer>
+  V1 = Original (Reis im Bild trotz Keto) · V2 = nach Image-Glossar-Patch (kein Reis, kein Brot bei Keto-Curry)<br>
+  Pfeile/Swipe blättern innerhalb der zwei Bilder eines Rezepts
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose">×</button>
+  <button class="lb-btn lb-prev" id="lbPrev">‹</button>
+  <img id="lbImg" alt="">
+  <button class="lb-btn lb-next" id="lbNext">›</button>
+  <div class="lb-info" id="lbInfo"></div>
+</div>
+
+<script>
+var SUPA = 'https://pnmrcmijqgxgtxwewpox.supabase.co/storage/v1/object/public/recipe-images/';
+var ARCHIVE = SUPA + '_archive-low-carb-v1-20260605/';
+var DATA = [
+  {
+    "slug": "garnelen-curry-mit-kokosmilch-und-spinat-keto",
+    "title": "Garnelen-Curry mit Kokosmilch und Spinat (Keto)",
+    "orig_freundin": "9", "orig_komm": "Ist da wirklich Reis dabei bei Keto?",
+    "score_v1": "4.0", "score_v2": 8.6,
+    "v2_ai_comment": "", "v2_failure": "none",
+    "v1_img": ARCHIVE + "garnelen-curry-mit-kokosmilch-und-spinat-keto.png",
+    "v2_img": SUPA + "garnelen-curry-mit-kokosmilch-und-spinat-keto.png"
+  }
+];
+var STORAGE_VERDICTS = 'mahly-low-carb-v2-verdicts';
+var STORAGE_KOMMS = 'mahly-low-carb-v2-komms';
+
+var IMAGES = [];
+for (var i=0;i<DATA.length;i++){
+  IMAGES.push({slug:DATA[i].slug,title:DATA[i].title,ver:'V1',url:DATA[i].v1_img});
+  IMAGES.push({slug:DATA[i].slug,title:DATA[i].title,ver:'V2',url:DATA[i].v2_img});
+}
+
+var list=document.getElementById('list'), cnt=document.getElementById('cnt');
+var lightbox=document.getElementById('lightbox'), lbImg=document.getElementById('lbImg');
+var lbInfo=document.getElementById('lbInfo');
+var lbIdx=-1;
+var GROUP_SIZE = 2;
+
+function loadJSON(k){try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){return{}}}
+function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function badgeClass(s){if(s==null||s==='')return 'b-none';var n=Number(s);if(n>=8.5)return 'b-good';if(n>=8.0)return 'b-mid';return 'b-low'}
+function fmt(s){return (s==null||s==='')?'—':Number(s).toFixed(1).replace('.',',')}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+
+function openLightbox(idx){
+  if(idx<0||idx>=IMAGES.length)return;
+  lbIdx=idx;
+  var it=IMAGES[idx];
+  lbImg.src=it.url;
+  var posInGroup=(idx%GROUP_SIZE)+1;
+  lbInfo.innerHTML='<b>'+esc(it.title)+'</b><span class="v-tag">'+it.ver+'</span> Bild '+posInGroup+' von '+GROUP_SIZE;
+  document.getElementById('lbPrev').style.opacity=(posInGroup===1)?'0.25':'1';
+  document.getElementById('lbNext').style.opacity=(posInGroup===GROUP_SIZE)?'0.25':'1';
+  document.getElementById('lbPrev').style.pointerEvents=(posInGroup===1)?'none':'auto';
+  document.getElementById('lbNext').style.pointerEvents=(posInGroup===GROUP_SIZE)?'none':'auto';
+  lightbox.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){lightbox.classList.remove('open');lbImg.src='';document.body.style.overflow='';lbIdx=-1}
+function nav(delta){
+  var groupStart=Math.floor(lbIdx/GROUP_SIZE)*GROUP_SIZE, groupEnd=groupStart+(GROUP_SIZE-1);
+  var n=lbIdx+delta;
+  if(n<groupStart||n>groupEnd)return;
+  openLightbox(n);
+}
+document.getElementById('lbClose').addEventListener('click',closeLightbox);
+document.getElementById('lbPrev').addEventListener('click',function(e){e.stopPropagation();nav(-1)});
+document.getElementById('lbNext').addEventListener('click',function(e){e.stopPropagation();nav(1)});
+lightbox.addEventListener('click',function(e){if(e.target===lightbox||e.target===lbImg||e.target===lbInfo)closeLightbox()});
+document.addEventListener('keydown',function(e){if(!lightbox.classList.contains('open'))return;if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')nav(-1);if(e.key==='ArrowRight')nav(1)});
+var touchX0=0;
+lightbox.addEventListener('touchstart',function(e){touchX0=e.changedTouches[0].clientX},{passive:true});
+lightbox.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-touchX0;if(Math.abs(dx)>40){if(dx>0)nav(-1);else nav(1)}},{passive:true});
+
+function render(){
+  var verdicts=loadJSON(STORAGE_VERDICTS);
+  var komms=loadJSON(STORAGE_KOMMS);
+  list.innerHTML='';
+  var besser=0,gleich=0,schlechter=0,mitKomm=0;
+  for(var i=0;i<DATA.length;i++){
+    var d=DATA[i];
+    var verdict=verdicts[d.slug]||'';
+    if(verdict==='besser')besser++;
+    if(verdict==='gleich')gleich++;
+    if(verdict==='schlechter')schlechter++;
+    if(komms[d.slug] && (komms[d.slug].v1||komms[d.slug].v2))mitKomm++;
+    var card=document.createElement('div'); card.className='card';
+    var html='';
+    html+='<div class="card-head"><div class="card-title">'+esc(d.title)+'</div>';
+    html+='<div class="card-sub">Freundin: <b>'+d.orig_freundin+'/10</b> · AI: V1 '+d.score_v1+' → <b>V2 '+fmt(d.score_v2)+'</b></div></div>';
+    html+='<div class="quad">';
+    var versions=[['V1','v1','v1_img','score_v1','Original'],['V2','v2','v2_img','score_v2','Glossar-Patch']];
+    for(var j=0;j<versions.length;j++){
+      var v=versions[j], imgIdx=i*GROUP_SIZE+j;
+      var headerCls = v[1]==='v2' ? ' v2' : '';
+      html+='<div class="side'+headerCls+'"><h3>'+v[0]+' · '+v[4]+'</h3>';
+      html+='<img loading="lazy" src="'+esc(d[v[2]])+'" alt="" data-imgidx="'+imgIdx+'">';
+      html+='<div class="score-row"><span class="label">AI:</span><span class="badge '+badgeClass(d[v[3]])+'">'+fmt(d[v[3]])+'</span>';
+      if(v[1]==='v2' && d.v2_failure && d.v2_failure!=='none'){html+='<span class="label" style="margin-left:4px;color:var(--red)">⚠ '+esc(d.v2_failure)+'</span>'}
+      html+='</div>';
+      html+='<div class="komm-pro-bild"><span class="lab">📝 '+v[0]+'</span>';
+      var kVal=(komms[d.slug]&&komms[d.slug][v[1]])||'';
+      html+='<textarea data-slug="'+d.slug+'" data-ver="'+v[1]+'" class="'+(kVal?'has':'')+'" placeholder="optional">'+esc(kVal)+'</textarea></div></div>';
+    }
+    html+='</div>';
+    html+='<div class="comment-block orig"><h4>💬 Original-Kritik (Freundin zu V1)</h4><div class="text">'+esc(d.orig_komm)+'</div></div>';
+    if(d.v2_ai_comment) html+='<div class="comment-block v4ai"><h4>🤖 Vision-Check zum V2</h4><div class="text">'+esc(d.v2_ai_comment)+'</div></div>';
+    html+='<div class="fixed-btn">';
+    html+='<label><input type="radio" name="v-'+d.slug+'" value="besser" data-slug="'+d.slug+'"'+(verdict==='besser'?' checked':'')+'> ✅ V2 ist gefixt</label>';
+    html+='<label><input type="radio" name="v-'+d.slug+'" value="gleich" data-slug="'+d.slug+'"'+(verdict==='gleich'?' checked':'')+'> 🟰 V2 = V1</label>';
+    html+='<label><input type="radio" name="v-'+d.slug+'" value="schlechter" data-slug="'+d.slug+'"'+(verdict==='schlechter'?' checked':'')+'> ❌ V2 schlechter</label>';
+    html+='</div>';
+    card.innerHTML=html;
+    list.appendChild(card);
+  }
+  cnt.innerHTML='<strong>'+DATA.length+'</strong> · ✅ <strong>'+besser+'</strong> 🟰 <strong>'+gleich+'</strong> ❌ <strong>'+schlechter+'</strong> · 📝 <strong>'+mitKomm+'</strong>';
+}
+
+list.addEventListener('click',function(e){
+  var img=e.target.closest('img[data-imgidx]');
+  if(img){openLightbox(parseInt(img.dataset.imgidx,10))}
+});
+list.addEventListener('change',function(e){
+  if(e.target.type==='radio'&&e.target.dataset.slug){
+    var v=loadJSON(STORAGE_VERDICTS);v[e.target.dataset.slug]=e.target.value;saveJSON(STORAGE_VERDICTS,v);render();
+  }
+});
+list.addEventListener('input',function(e){
+  if(e.target.tagName==='TEXTAREA'&&e.target.dataset.slug){
+    var slug=e.target.dataset.slug,ver=e.target.dataset.ver;
+    var k=loadJSON(STORAGE_KOMMS);k[slug]=k[slug]||{};k[slug][ver]=e.target.value;
+    if(!k[slug][ver])delete k[slug][ver];
+    if(!k[slug].v1&&!k[slug].v2)delete k[slug];
+    saveJSON(STORAGE_KOMMS,k);
+    e.target.classList.toggle('has',e.target.value.trim()!=='');
+  }
+});
+
+document.getElementById('exportBtn').addEventListener('click',function(){
+  var verdicts=loadJSON(STORAGE_VERDICTS);var komms=loadJSON(STORAGE_KOMMS);
+  var lines=['slug;title;freundin;v1_ai;v2_ai;v2_urteil;orig_kritik;komm_v1;komm_v2'];
+  for(var i=0;i<DATA.length;i++){var d=DATA[i];var verdict=verdicts[d.slug]||'';var k=komms[d.slug]||{};
+    var row=[d.slug,d.title,d.orig_freundin,d.score_v1,d.score_v2,verdict,
+             (d.orig_komm||'').replace(/[;\n]+/g,' '),
+             (k.v1||'').replace(/[;\n]+/g,' '),(k.v2||'').replace(/[;\n]+/g,' ')];
+    var q=[];for(var j=0;j<row.length;j++){q.push('"'+String(row[j]).replace(/"/g,'""')+'"')}
+    lines.push(q.join(';'));
+  }
+  var blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);var a=document.createElement('a');
+  a.href=url;a.download='mahly-low-carb-v2-vergleich-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();URL.revokeObjectURL(url);
+});
+
+render();
+</script></body></html>
